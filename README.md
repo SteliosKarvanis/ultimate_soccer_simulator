@@ -1,8 +1,8 @@
-# To download the dependences, run:
+# To download the dependences
 `pip install -r requirements.txt`
 
 # To run the game
 `python main.py`
 
 # To control the player
-With the arrows, up and down controls the movement, right and left the orientation, space make spin
+With the arrows, `up / down` controls the movement, `right / left` the orientation, `space` make spin
