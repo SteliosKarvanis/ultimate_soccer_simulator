@@ -23,14 +23,14 @@ class Player(pygame.sprite.Sprite):
     
 
     def actions(self, keys: pygame.key.ScancodeWrapper):
-        linear_move = 0
-        angular_move = 0
         if keys[pygame.K_SPACE] or self.spin_count:
             self.spin_count += 1
             self._orientation = (self._orientation + PLAYER_SPIN_SPEED) % 360
-            if self.spin_count >= PLAYER_SPIN_COUNTDOWN:
+            if self.spin_count >= PLAYER_SPIN_COUNTDOWN or keys[pygame.K_SPACE]:
                 self.spin_count = 0
         else:
+            linear_move = 0
+            angular_move = 0
             if keys[pygame.K_LEFT]:
                 angular_move -= PLAYER_ANGULAR_SPEED
             if keys[pygame.K_RIGHT]:
