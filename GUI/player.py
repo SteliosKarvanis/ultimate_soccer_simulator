@@ -4,11 +4,11 @@ from constants import *
 import math
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, initial_pos: Tuple = (SCREEN_HEIGHT/2, SCREEN_WIDTH/2), orientation: float = 0):
+    def __init__(self, initial_pos: Tuple = (SCREEN_HEIGHT/2, SCREEN_WIDTH/2), orientation: float = 0, color = WHITE):
         super(Player, self).__init__()
         self.surface = pygame.Surface(PLAYER_SIZE)
         self.surface.set_colorkey(BACKGROUND_COLOR)
-        self.surface.fill(WHITE)
+        self.surface.fill(color)
         self._x, self._y = initial_pos
         self._orientation = orientation
         self.spin_count = 0
@@ -27,8 +27,8 @@ class Player(pygame.sprite.Sprite):
         angular_move = 0
         if keys[pygame.K_SPACE] or self.spin_count:
             self.spin_count += 1
-            self._orientation = (self._orientation + SPIN_SPEED) % 360
-            if self.spin_count >= SPIN_COUNTDOWN:
+            self._orientation = (self._orientation + PLAYER_SPIN_SPEED) % 360
+            if self.spin_count >= PLAYER_SPIN_COUNTDOWN:
                 self.spin_count = 0
         else:
             if keys[pygame.K_LEFT]:

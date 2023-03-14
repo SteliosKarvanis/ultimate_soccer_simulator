@@ -7,7 +7,7 @@ class App:
         self._running = True
         self._screen = None
         self.size = SCREEN_WIDTH, SCREEN_HEIGHT
-        self.player = Player()
+        self.player = Player(color = ALLY_PLAYER_COLOR)
  
     def on_init(self):
         pygame.init()
