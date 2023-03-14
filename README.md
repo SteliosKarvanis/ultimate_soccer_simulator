@@ -1,4 +1,4 @@
-# To download the dependences, run:
+# To download the dependences
 `pip install -r requirements.txt`
 
 # To run the game
