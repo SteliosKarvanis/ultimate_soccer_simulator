@@ -9,7 +9,6 @@ class Player(pygame.sprite.Sprite):
         self.surface = pygame.Surface(PLAYER_SIZE)
         self.surface.set_colorkey(BACKGROUND_COLOR)
         self.surface.fill(WHITE)
-        self.rect = self.surface.get_rect()
         self._x, self._y = initial_pos
         self._orientation = orientation
         self.spin_count = 0
