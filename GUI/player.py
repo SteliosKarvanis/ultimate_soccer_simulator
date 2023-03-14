@@ -12,7 +12,9 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.surface.get_rect()
         self._x, self._y = initial_pos
         self._orientation = orientation
-        print(self._x, self._y)
+        self.spin_count = 0
+
+
     def get_pos(self) -> Tuple:
         return self._x, self._y
     
@@ -24,8 +26,11 @@ class Player(pygame.sprite.Sprite):
     def actions(self, keys: pygame.key.ScancodeWrapper):
         linear_move = 0
         angular_move = 0
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] or self.spin_count:
+            self.spin_count += 1
             self._orientation = (self._orientation + SPIN_SPEED) % 360
+            if self.spin_count >= SPIN_COUNTDOWN:
+                self.spin_count = 0
         else:
             if keys[pygame.K_LEFT]:
                 angular_move -= PLAYER_ANGULAR_SPEED
