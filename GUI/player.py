@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         return self._orientation
     
 
-    def actions(self, keys: pygame.key.ScancodeWrapper):
+    def update(self, keys: pygame.key.ScancodeWrapper):
         if keys[pygame.K_SPACE] or self.spin_count:
             if keys[pygame.K_SPACE]:
                 self.spin_count = 0
@@ -45,7 +45,7 @@ class Player(pygame.sprite.Sprite):
             self._x = self._x + math.sin(self._orientation*math.pi/180)*linear_move
             self._y = self._y + math.cos(self._orientation*math.pi/180)*linear_move
     
-    def draw_player(self):
+    def draw(self):
         surface = pygame.transform.rotate(self.surface, self._orientation)
         rect = surface.get_rect()
         rect.center = self.get_pos()
