@@ -5,13 +5,12 @@ import math
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, initial_pos: Tuple = (SCREEN_HEIGHT/2, SCREEN_WIDTH/2), orientation: float = 0, color = WHITE):
-        super(Player, self).__init__()
+        super().__init__()
         self.surface = pygame.Surface(PLAYER_SIZE)
         self.surface.set_colorkey(BACKGROUND_COLOR)
         self.surface.fill(color)
         self._x, self._y = initial_pos
         self._orientation = orientation
-        self.spin_count = 0
 
 
     def get_pos(self) -> Tuple:
@@ -22,31 +21,22 @@ class Player(pygame.sprite.Sprite):
         return self._orientation
     
 
-    def update(self, keys: pygame.key.ScancodeWrapper):
-        if keys[pygame.K_SPACE] or self.spin_count:
-            if keys[pygame.K_SPACE]:
-                self.spin_count = 0
-            self.spin_count += 1
-            self._orientation = (self._orientation + PLAYER_SPIN_SPEED) % 360
-            if self.spin_count >= PLAYER_SPIN_COUNTDOWN:
-                self.spin_count = 0
+    def update(self, action):
+        rotate, forward, spin = action
+        if forward < 0:
+            rotate *= -1
+            spin *= -1
+        if spin:
+            self._orientation = (self._orientation - spin*PLAYER_SPIN_SPEED*spin) % 360
         else:
-            linear_move = 0
-            angular_move = 0
-            if keys[pygame.K_LEFT]:
-                angular_move -= PLAYER_ANGULAR_SPEED
-            if keys[pygame.K_RIGHT]:
-                angular_move += PLAYER_ANGULAR_SPEED
-            if keys[pygame.K_UP]:
-                linear_move += PLAYER_LINEAR_SPEED
-            if keys[pygame.K_DOWN]:
-                linear_move -= PLAYER_LINEAR_SPEED
-            self._orientation = (self._orientation + angular_move) % 360
-            self._x = self._x + math.sin(self._orientation*math.pi/180)*linear_move
-            self._y = self._y + math.cos(self._orientation*math.pi/180)*linear_move
-    
-    def draw(self):
+            self._orientation = (self._orientation - rotate*PLAYER_ANGULAR_SPEED) % 360
+            self._x = self._x - math.sin(self._orientation * math.pi/180)*PLAYER_LINEAR_SPEED*forward
+            self._y = self._y - math.cos(self._orientation*math.pi/180)*PLAYER_LINEAR_SPEED*forward
+
+
+    def draw(self, screen):
         surface = pygame.transform.rotate(self.surface, self._orientation)
         rect = surface.get_rect()
         rect.center = self.get_pos()
-        return surface, rect
+        screen.blit(source=surface, dest=rect)
+        return screen

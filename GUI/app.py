@@ -31,10 +31,13 @@ class App:
 
 
     def on_render(self):
+        # Draw background
         self.background_image = pygame.transform.scale(self.background_image, self.size)
         self._screen.blit(self.background_image, (0, 0))
+ 
         if self._running:
-            self.simulation.draw()
+            self._screen = self.button.draw(self._screen)
+            self._screen = self.simulation.draw(self._screen)
         else:
             pass
         # Update the display
