@@ -20,18 +20,18 @@ class Player(pygame.sprite.Sprite):
     def get_orientation(self) -> float:
         return self._orientation
     
+    def get_pose(self) -> Tuple:
+        return self._x, self._y, self._orientation
+    
 
     def update(self, action):
         rotate, forward, spin = action
-        if forward < 0:
-            rotate *= -1
-            spin *= -1
         if spin:
             self._orientation = (self._orientation - spin*PLAYER_SPIN_SPEED*spin) % 360
         else:
             self._orientation = (self._orientation - rotate*PLAYER_ANGULAR_SPEED) % 360
-            self._x = self._x - math.sin(self._orientation * math.pi/180)*PLAYER_LINEAR_SPEED*forward
-            self._y = self._y - math.cos(self._orientation*math.pi/180)*PLAYER_LINEAR_SPEED*forward
+            self._x = self._x + math.sin(self._orientation * math.pi/180)*PLAYER_LINEAR_SPEED*forward
+            self._y = self._y + math.cos(self._orientation*math.pi/180)*PLAYER_LINEAR_SPEED*forward
 
 
     def draw(self, screen):

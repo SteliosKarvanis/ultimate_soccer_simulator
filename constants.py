@@ -6,7 +6,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 #Ball
-BALL_RADIUS = 20
+BALL_RADIUS = 15
 
 
 #Screen

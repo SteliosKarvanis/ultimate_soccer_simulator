@@ -1,13 +1,12 @@
 import pygame 
 from constants import *
-import math
-from typing import Tuple
+from typing import Tuple, Dict
 
 class ManualBehaviour:
     def __init__(self) -> None:
         self.spin_count = 0
 
-    def get_action(self, state) -> Tuple:
+    def get_action(self, state: Dict) -> Tuple:
         rotate = 0
         forward = 0
         spin = 0
@@ -18,6 +17,7 @@ class ManualBehaviour:
             self.spin_count += 1
             if self.spin_count >= PLAYER_SPIN_COUNTDOWN:
                 self.spin_count = 0
+        
         if keys[pygame.K_LEFT]:
             rotate -= 1
         if keys[pygame.K_RIGHT]:

@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from GUI.simulation import Simulation
+from simulation import Simulation
 from GUI.button import Button
 
 
@@ -12,7 +12,9 @@ class App:
         self.background_image = pygame.image.load("resources/lawn.jpeg")
         self.simulation = Simulation()
         self.button = Button()
-
+    def draw_field(self):
+        pass
+    
     def on_init(self):
         pygame.init()
         self._screen = pygame.display.set_mode(self.size)
