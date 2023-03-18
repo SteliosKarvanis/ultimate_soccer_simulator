@@ -8,7 +8,9 @@ class App:
     def __init__(self):
         self._running = True
         self._screen = None
-        self.size = SCREEN_WIDTH, SCREEN_HEIGHT
+        self.frame_size = SCREEN_WIDTH, SCREEN_HEIGHT
+        self.field_size = FIELD_WIDTH, FIELD_HEIGHT
+        self.status_bar_offset = STATUS_HEIGHT
         self.background_image = pygame.image.load("resources/lawn.jpeg")
         self.simulation = Simulation()
         self.button = Button()
@@ -17,7 +19,7 @@ class App:
     
     def on_init(self):
         pygame.init()
-        self._screen = pygame.display.set_mode(self.size)
+        self._screen = pygame.display.set_mode(self.frame_size)
         self._running = True
  
 
@@ -34,8 +36,8 @@ class App:
 
     def on_render(self):
         # Draw background
-        self.background_image = pygame.transform.scale(self.background_image, self.size)
-        self._screen.blit(self.background_image, (0, 0))
+        self.background_image = pygame.transform.scale(self.background_image, self.field_size)
+        self._screen.blit(self.background_image, (0, self.status_bar_offset))
  
         if self._running:
             self._screen = self.button.draw(self._screen)
