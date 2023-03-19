@@ -14,7 +14,8 @@ class Simulation:
         self.ball = Ball()
         self.ally_behaviour = ManualBehaviour()
         self.scoreboard = ScoreBoard()
-        # self.clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
+        self.clock.tick()
     def update(self):
         ally_action = self.ally_behaviour.get_action(self.get_state())
         self.ally.update(ally_action)
@@ -25,7 +26,7 @@ class Simulation:
         screen = self.ally.draw(screen)
         screen = self.opponent.draw(screen)
         screen = self.ball.draw(screen)
-        screen = self.scoreboard.draw(screen)
+        screen = self.scoreboard.draw(screen, self.clock.tick())
         return screen
 
     def get_state(self) -> Dict:
