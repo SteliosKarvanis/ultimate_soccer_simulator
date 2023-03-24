@@ -1,29 +1,29 @@
 import pygame
+from pygame.event import Event
 from constants import *
+from GUI.menu import Menu
 from simulation import Simulation
 from GUI.button import Button
-
 
 class App:
     def __init__(self):
         self._running = True
         self._screen = None
-        self.frame_size = SCREEN_WIDTH, SCREEN_HEIGHT
-        self.field_size = FIELD_WIDTH, FIELD_HEIGHT
-        self.status_bar_offset = STATUS_HEIGHT
-        self.background_image = pygame.image.load("resources/lawn.jpeg")
-        self.simulation = Simulation()
+        self.menu = Menu()
+        self.background_image = pygame.image.load("resources/background.jpeg")
+        self.lawn = pygame.image.load("resources/lawn.jpeg")
+        self.simulation = Simulation(self.menu.configs)
         self.button = Button()
     def draw_field(self):
         pass
     
     def on_init(self):
         pygame.init()
-        self._screen = pygame.display.set_mode(self.frame_size)
+        self._screen = pygame.display.set_mode(self.menu.get_config("screen_res"))
         self._running = True
  
 
-    def on_event(self, event):
+    def on_event(self, event: Event):
         if event.type == pygame.QUIT:
             self._running = False
 
@@ -36,8 +36,9 @@ class App:
 
     def on_render(self):
         # Draw background
-        self.background_image = pygame.transform.scale(self.background_image, self.field_size)
-        self._screen.blit(self.background_image, (0, self.status_bar_offset))
+        self.__update_assets__()
+        self._screen.blit(self.background_image, (0,0))
+        self._screen.blit(self.lawn, (0, self.menu.get_config("status_bar_height")))
  
         if self._running:
             self._screen = self.button.draw(self._screen)
@@ -62,4 +63,8 @@ class App:
             self.on_loop()
             self.on_render()
         self.on_cleanup()
+
+    def __update_assets__(self):
+        self.background_image = pygame.transform.scale(self.background_image, (self.menu.get_config("screen_res")[0], self.menu.get_config("status_bar_height")))
+        self.lawn = pygame.transform.scale(self.lawn, self.menu.get_config("field_size"))
  
