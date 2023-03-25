@@ -1,20 +1,24 @@
-from typing import Dict
+from typing import Dict, List
 import pygame
 from pygame import Surface
 from constants import *
 from math import floor
-from utils.digits import digits
+from utils.digits import digits, DIGIT_WIDTH, CLOCK_FRAME_HEIGHT
+
+__CLOCK_POS__ = (93, 61)
+CLOCK_DIG_POS = [(__CLOCK_POS__[0] + k*DIGIT_WIDTH, __CLOCK_POS__[1]) for k in [0, 1, 2.5, 3.5]]
+__ALLY_SCORE_POS__ = (32, 51)
+SCORES_DIG_POS = [(__ALLY_SCORE_POS__[0] + k*DIGIT_WIDTH, __ALLY_SCORE_POS__[1]) for k in [0, 1, 10.5, 11.5]]
 
 class ScoreBoard:
     def __init__(self, frame_height: float):
-        self.score = {"ally": 0, "opponent": 0}
-        self.scoreboard = pygame.image.load("resources/scoreboard.png")
-        self.frame = Surface(self.scoreboard.get_size())
+        self.frame = pygame.image.load("resources/scoreboard.png")
+        self.score, self.score_digits = self.__create_scores__()
         self.__update_assets__(frame_height)
         self.time = 0 # tracks time in ms
         # keeps the appropriate representation for the scoreboard
-        self.clock = {"min": [0,0], "sec": [0,0], "ms": 0}
-        self.__draw_scores__()
+        self.clock, self.clock_digits = self.__create_clock__()
+    
     def get_score(self):
         return self.score
     
@@ -30,51 +34,38 @@ class ScoreBoard:
     def draw(self, screen: Surface, time: int):
         self.time += time
         self.__update_clock__()
-        self.__draw_clock__()
         screen.blit(self.frame,((screen.get_width()-self.frame.get_width())/2,0))
         return screen
     
     def __update_assets__(self, frame_height: float):
         pygame.transform.scale_by(self.frame, frame_height/self.frame.get_height())
-        pygame.transform.scale_by(self.scoreboard, frame_height/self.scoreboard.get_height())
-        self.frame.blit(self.scoreboard, (0,0))
-        self.__draw_scores__()
+        self.__update_scores__()
 
-    def __update_clock__(self):
-        ms = self.time%1000
-        sec = floor(self.time/1000)%60
-        min = floor(self.time/6e4)
-        self.clock.update({"min": [floor(min/10),min%10], "sec": [floor(sec/10),sec%10], "ms": ms})
+    def __create_scores__(self):
+        surfs = [self.frame.subsurface(SCORES_DIG_POS[2*k], (2*DIGIT_WIDTH, CLOCK_FRAME_HEIGHT)) for k in range(2)]
+        digs = [surfs[i].subsurface((k*DIGIT_WIDTH,0),(DIGIT_WIDTH, CLOCK_FRAME_HEIGHT)) for i in range(2) for k in range(2)]
+        return {"ally": 12, "opponent": 34}, {"ally": [digs[0], digs[1]], "opponent": [digs[2], digs[3]]}
 
-    def __draw_scores__(self):
-        pos = self.__get_scores_digits_positions__()
+    def __update_scores__(self):
         for k in ["ally", "opponent"]:
             n = self.score.get(k)
-            self.frame.blit(digits[floor(n/10)%10],pos.get(k)[0])
-            self.frame.blit(digits[n%10],pos.get(k)[1])
-    
-    def __get_scores_digits_positions__(self) -> Dict:
-        ally_digits_pos = [[0,0],[0,0]]
-        opponent_digits_pos = [[0,0],[0,0]]
-        ally_digits_pos[0][0] = -digits[0].get_width() + SCORES_CENTERS.get("ally")[0]
-        ally_digits_pos[0][1] = -digits[0].get_height()/2 + SCORES_CENTERS.get("ally")[1]
-        ally_digits_pos[1][1] = ally_digits_pos[0][1]
-        ally_digits_pos[1][0] = SCORES_CENTERS.get("ally")[0]
-        opponent_digits_pos[0][0] = -digits[0].get_width() + SCORES_CENTERS.get("opponent")[0]
-        opponent_digits_pos[0][1] = -digits[0].get_height()/2 + SCORES_CENTERS.get("opponent")[1]
-        opponent_digits_pos[1][1] = opponent_digits_pos[0][1]
-        opponent_digits_pos[1][0] = SCORES_CENTERS.get("opponent")[0]
-        return {"ally": ally_digits_pos, "opponent": opponent_digits_pos}
+            self.score_digits.get(k)[0].blit(digits[floor(n/10)%10], (0,0))
+            self.score_digits.get(k)[1].blit(digits[n%10], (0,0))
 
+    # don't even ask
+    def __create_clock__(self)->List[Dict]:
+        surfs = [self.frame.subsurface(CLOCK_DIG_POS[2*k], (2*DIGIT_WIDTH, CLOCK_FRAME_HEIGHT)) for k in range(2)]
+        digs = [surfs[i].subsurface((k*DIGIT_WIDTH,0),(DIGIT_WIDTH, CLOCK_FRAME_HEIGHT)) for i in range(2) for k in range(2)]
+        return {"min": [0,0], "sec": [0,0]}, {"min": [digs[0], digs[1]], "sec": [digs[2], digs[3]]}
 
-    # Draws digits of current game time to the clock in the scoreboard
-    def __draw_clock__(self):
-        clock_entries = []
-        for k in ["min","sec"]:
-            [clock_entries.append(digits[i]) for i in self.clock.get(k)]
-        for i, pos in enumerate(CLOCK_DIGIT_POSITIONS):
-            self.frame.blit(clock_entries[i],pos)
-
+    def __update_clock__(self):
+        sec = floor(self.time/1000)%60
+        min = floor(self.time/6e4)
+        dig_nums = [floor(min/10), min%10, floor(sec/10), sec%10]
+        digs = [digits[d] for d in dig_nums]
+        for i, k in enumerate(["min", "sec"]):
+            [self.clock_digits.get(k)[j].blit(digs[j+2*i], (0,0)) for j in range(2)]
+            self.clock.update({k: dig_nums[2*i:2*i+2]})
     
 class ScoreUpdateError(Exception):
     def __init__(self, value) -> None:
