@@ -3,6 +3,9 @@ from pygame import Surface
 from pygame import transform
 from constants import *
 
+DIGIT_WIDTH = 15
+CLOCK_FRAME_HEIGHT = 35
+
 binaries = [
     [1,1,1,1,1,1,0],
     [1,1,0,0,0,0,0],
