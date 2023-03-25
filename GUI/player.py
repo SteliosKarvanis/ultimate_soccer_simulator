@@ -1,13 +1,14 @@
 import pygame
 from pygame import Surface
+from pygame.sprite import Group
 from utils.types import GameElement
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 from constants import *
 import math
 
 class Player(pygame.sprite.Sprite, GameElement):
     def __init__(
-        self, initial_pos: Tuple = (0, 0), orientation: float = 0, color=colors.get("white"), scale=1
+        self, coordinate_conversion, initial_pos: Tuple = (0, 0), orientation: float = 0, color=colors.get("white"), scale=1
     ):
         super().__init__()
         self.size = (5, 5)
@@ -19,11 +20,12 @@ class Player(pygame.sprite.Sprite, GameElement):
         self.spin_speed= 2
         self._x, self._y = initial_pos
         self._orientation = orientation
+        self.coordinate_convert = coordinate_conversion
 
     def get_sprite(self) -> Surface:
         return self._surface
     
-    def update(self, action):
+    def update(self, action, boundary: Surface, elements: Group):
         pose_updates = self.__next_pose(action)
         
         updated_values = []
@@ -33,7 +35,8 @@ class Player(pygame.sprite.Sprite, GameElement):
             else:
                 updated_values.append(update)
 
-        self._orientation, self._x, self._y = tuple(updated_values)
+        if self.__is_valid_update__(updated_values, boundary, elements):
+            self._orientation, self._x, self._y = tuple(updated_values)
 
     def __next_pose(self, action) -> Tuple[Optional[float]]:
         rotate, forward, spin = action
@@ -45,4 +48,10 @@ class Player(pygame.sprite.Sprite, GameElement):
                 self._x + math.cos(self._orientation * math.pi / 180) * self.speed * forward,
                 self._y + math.sin(self._orientation * math.pi / 180) * self.speed * forward
                 )
+        
+    def __is_valid_update__(self, updates: List[float], boundary: Surface, elements: Group)-> bool:
+        new_sprite = pygame.transform.rotate(self._surface, updates[0])
+        new_rect = new_sprite.get_rect()
+        new_rect.center = self.coordinate_convert((updates[1], updates[2]))
+        return boundary.get_rect().contains(new_rect)
 

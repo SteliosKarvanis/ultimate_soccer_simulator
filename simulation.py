@@ -12,14 +12,17 @@ from utils.types import Point, GameElement
 
 
 class Simulation:
-    def __init__(self, config: Configuration) -> None:
+    def __init__(self, config: Configuration, boundary: Surface) -> None:
         self.configs = SimulConfig.generate_from_config(config)
+        self.boundary = boundary
         self.FPS = self.configs.FPS
         self.field_coordinate_scale = self.configs.field_size[0] / 100
         self.ally = Player(
+            self.__to_boundary_coord__,
             scale=self.field_coordinate_scale, color=colors.get("darkblue")
         )
         self.opponent = Player(
+            self.__to_boundary_coord__,
             scale=self.field_coordinate_scale, color=colors.get("darkred")
         )
         self.ball = Ball()
@@ -31,7 +34,7 @@ class Simulation:
 
     def update(self):
         ally_action = self.ally_behaviour.get_action(self.get_state())
-        self.ally.update(ally_action)
+        self.ally.update(ally_action, self.boundary, self.game_elements)
         # self.opponent.update(None)
         self.ball.update(None)
 
@@ -59,14 +62,21 @@ class Simulation:
             element.get_sprite(), element.get_orientation()
         )
         rect = sprite.get_rect()
-        rect.center = self.__c_to_p__(element.get_pos())
+        rect.center = self.__boundary_to_screen__(element.get_pos())
         screen.blit(source=sprite, dest=rect)
         return screen
 
-    def __c_to_p__(self, point: Point) -> Point:
+    def __boundary_to_screen__(self, point: Point) -> Point:
+        pixels = [0, 0]
+        boundary_coord = self.__to_boundary_coord__(point)
+        offset = self.configs.status_bar_height
+        pixels[0] = boundary_coord[0]
+        pixels[1] = offset + boundary_coord[1]
+        return tuple(pixels)
+
+    def __to_boundary_coord__(self, point: Point) -> Point:
         pixels = [0, 0]
         w, h = self.configs.field_size
-        offset = self.configs.status_bar_height
         pixels[0] = w / 2 + point[0] * self.field_coordinate_scale
-        pixels[1] = offset + h / 2 - point[1] * self.field_coordinate_scale
+        pixels[1] = h / 2 - point[1] * self.field_coordinate_scale
         return tuple(pixels)

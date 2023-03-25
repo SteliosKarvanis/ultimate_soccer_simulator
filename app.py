@@ -12,7 +12,8 @@ class App:
         self.menu = Menu()
         self.background_image = pygame.image.load("resources/background.jpeg")
         self.lawn = pygame.image.load("resources/lawn.jpeg")
-        self.simulation = Simulation(self.menu.configs)
+        self.__update_assets__()
+        self.simulation = Simulation(self.menu.configs, self.lawn)
         self.button = Button()
     def draw_field(self):
         pass
@@ -67,4 +68,3 @@ class App:
     def __update_assets__(self):
         self.background_image = pygame.transform.scale(self.background_image, (self.menu.get_config("screen_res")[0], self.menu.get_config("status_bar_height")))
         self.lawn = pygame.transform.scale(self.lawn, self.menu.get_config("field_size"))
- 
