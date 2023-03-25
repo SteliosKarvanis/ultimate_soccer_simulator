@@ -1,17 +1,21 @@
 import pygame
+from pygame import Surface
+from utils.types import GameElement
 from constants import *
 
-
-class Ball(pygame.sprite.Sprite):
+class Ball(pygame.sprite.Sprite, GameElement):
     def __init__(self):
-        self.pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-        self.vel = 0
-        self.orientation = 0
+        super().__init__()
+        self._x, self._y = (0,0)
+        self._vel = 0
+        self._orientation = 0
+        self._radius = 2
+        self._sprite = pygame.image.load("resources/ball.png")
+        self._sprite.set_colorkey(BACKGROUND_COLOR)
+        self._sprite = pygame.transform.scale(self._sprite, (30, 30))
 
     def update(self, action):
         pass
 
-    
-    def draw(self, screen):
-        pygame.draw.circle(screen, RED, self.pos, BALL_RADIUS)
-        return screen
+    def get_sprite(self) -> Surface:
+        return self._sprite

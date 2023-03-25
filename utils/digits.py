@@ -19,9 +19,9 @@ binaries = [
 seg_length = round(DIGIT_WIDTH*0.8)
 seg_width = round(seg_length/8)
 horiz_rect = Surface((seg_length, seg_width))
-horiz_rect.fill(WHITE)
+horiz_rect.fill(colors.get("white"))
 vert_rect = Surface((seg_width, seg_length))
-vert_rect.fill(WHITE)
+vert_rect.fill(colors.get("white"))
 
 segments = [
     [(DIGIT_WIDTH-seg_width, seg_width),vert_rect],
@@ -39,14 +39,14 @@ def get_segments(n : int) -> Sequence[bool]:
 
 def draw_digit(n : int) -> Surface:
     digit = Surface((DIGIT_WIDTH,CLOCK_FRAME_HEIGHT))
-    digit.fill(BLACK)
+    digit.fill(colors.get("black"))
     for i, draw in enumerate(get_segments(n)):
         if draw:
             pos = segments[i][0]
             segment = segments[i][1]
             digit.blit(segment,pos)
     frame = Surface((DIGIT_WIDTH,CLOCK_FRAME_HEIGHT))
-    frame.fill(BLACK)
+    frame.fill(colors.get("black"))
     ratio = 0.8
     digit = transform.smoothscale_by(digit, ratio)
     frame.blit(digit, ((1-ratio)/2*DIGIT_WIDTH,(1-ratio)/2*CLOCK_FRAME_HEIGHT))

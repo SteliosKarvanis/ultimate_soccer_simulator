@@ -1,18 +1,19 @@
 from typing import AnyStr,Dict
 import pygame
+from pygame import Surface
 from constants import *
 from math import floor
 from utils.digits import digits
 
 class ScoreBoard:
-    def __init__(self):
-        self.score = {"ally":0, "opponent":0}
+    def __init__(self, frame_height: int):
+        self.score = {"ally": 0, "opponent": 0}
         self.frame = pygame.image.load("resources/scoreboard.png")
-        self.frame = pygame.transform.smoothscale_by(self.frame,SCOREBOARD_HEIGHT/self.frame.get_height())
-        self.__draw_clock_colon__()
+        self.frame = pygame.transform.smoothscale_by(self.frame,frame_height/self.frame.get_height())
         self.time = 0 # tracks time in ms
-        self.clock = {"min": [0,0], "sec": [0,0], "ms": 0} # keeps the appropriate representation for the scoreboard
-    
+        # keeps the appropriate representation for the scoreboard
+        self.clock = {"min": [0,0], "sec": [0,0], "ms": 0}
+        self.__draw_scores__()
     def get_score(self):
         return self.score
     
@@ -23,13 +24,13 @@ class ScoreBoard:
         if curr_score >= 99:
             raise ScoreUpdateError("Scoreboard cannot count with 3 digits")
         self.score.update((character,curr_score + 1))
+        self.__draw_scores__()
     
-    def draw(self, screen, time):
+    def draw(self, screen: Surface, time):
         self.time += time
         self.__update_clock__()
         self.__draw_clock__()
-        self.__draw_scores__()
-        screen.blit(self.frame,((SCREEN_WIDTH-self.frame.get_width())/2,0))
+        screen.blit(self.frame,((screen.get_width()-self.frame.get_width())/2,0))
         return screen
     
 
@@ -43,7 +44,7 @@ class ScoreBoard:
         pos = self.__get_scores_digits_positions()
         for k in ["ally", "opponent"]:
             n = self.score.get(k)
-            self.frame.blit(digits[floor(n/10)],pos.get(k)[0])
+            self.frame.blit(digits[floor(n/10)%10],pos.get(k)[0])
             self.frame.blit(digits[n%10],pos.get(k)[1])
     
     def __get_scores_digits_positions(self) -> Dict:
@@ -67,17 +68,6 @@ class ScoreBoard:
             [clock_entries.append(digits[i]) for i in self.clock.get(k)]
         for i, pos in enumerate(CLOCK_DIGIT_POSITIONS):
             self.frame.blit(clock_entries[i],pos)
-
-    # is kept fixed, could be edited into the sprite
-    def __draw_clock_colon__(self):
-        background = pygame.Surface((round(DIGIT_WIDTH/2),CLOCK_FRAME_HEIGHT))
-        background.fill(BLACK)
-        white_sqr = pygame.Surface((round(DIGIT_WIDTH/10),round(DIGIT_WIDTH/10)))
-        white_sqr.fill(WHITE)
-        center = background.get_rect().center
-        background.blit(white_sqr,(center[0]-white_sqr.get_width()/2,center[1]-2*white_sqr.get_height()))
-        background.blit(white_sqr,(center[0]-white_sqr.get_width()/2,center[1]+white_sqr.get_height()))
-        self.frame.blit(background,(CLOCK_CENTER[0]-background.get_width()/2,CLOCK_CENTER[1]-background.get_height()/2))
 
     
 class ScoreUpdateError(Exception):
