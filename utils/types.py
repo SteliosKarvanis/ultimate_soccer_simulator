@@ -19,7 +19,7 @@ class GameElement:
         return self._orientation
     
     def get_pose(self)-> Tuple[float, float, float]:
-        return self.get_pos(), self.get_orientation()
+        return self._orientation, self._x, self._y
 
     def get_sprite(self)-> Surface:
         raise NotImplementedError(

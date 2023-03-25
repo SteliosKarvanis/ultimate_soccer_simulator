@@ -12,11 +12,11 @@ class Player(pygame.sprite.Sprite, GameElement):
         super().__init__()
         self.size = (5, 5)
         self._surface = Surface((self.size[0] * scale, self.size[1] * scale))
-        self._surface.set_colorkey(BACKGROUND_COLOR)
+        self._surface.set_colorkey(colors.get("black"))
         self._surface.fill(color)
         self.speed = 0.3
-        self.ang_speed = 0.3
-        self.spin_speed = 2
+        self.ang_speed = 0.7
+        self.spin_speed= 2
         self._x, self._y = initial_pos
         self._orientation = orientation
 
@@ -34,7 +34,6 @@ class Player(pygame.sprite.Sprite, GameElement):
                 updated_values.append(update)
 
         self._orientation, self._x, self._y = tuple(updated_values)
-
 
     def __next_pose(self, action) -> Tuple[Optional[float]]:
         rotate, forward, spin = action
