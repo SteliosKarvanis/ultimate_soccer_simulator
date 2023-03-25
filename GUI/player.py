@@ -2,6 +2,7 @@ import pygame
 from typing import Tuple
 from constants import *
 import math
+from utils.agent_actions import Action
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, initial_pos: Tuple = (SCREEN_HEIGHT/2, SCREEN_WIDTH/2), orientation: float = 0, color = WHITE):
@@ -24,14 +25,13 @@ class Player(pygame.sprite.Sprite):
         return self._x, self._y, self._orientation
     
 
-    def update(self, action):
-        rotate, forward, spin = action
-        if spin:
-            self._orientation = (self._orientation - spin*PLAYER_SPIN_SPEED*spin) % 360
+    def update(self, action: Action):
+        if action.spin:
+            self._orientation = (self._orientation - action.spin*PLAYER_SPIN_SPEED*action.spin) % 360
         else:
-            self._orientation = (self._orientation - rotate*PLAYER_ANGULAR_SPEED) % 360
-            self._x = self._x + math.sin(self._orientation * math.pi/180)*PLAYER_LINEAR_SPEED*forward
-            self._y = self._y + math.cos(self._orientation*math.pi/180)*PLAYER_LINEAR_SPEED*forward
+            self._orientation = (self._orientation - action.rotate*PLAYER_ANGULAR_SPEED) % 360
+            self._x = self._x + math.sin(self._orientation * math.pi/180)*PLAYER_LINEAR_SPEED*action.forward
+            self._y = self._y + math.cos(self._orientation*math.pi/180)*PLAYER_LINEAR_SPEED*action.forward
 
 
     def draw(self, screen):

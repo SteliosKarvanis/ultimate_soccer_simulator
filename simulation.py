@@ -6,6 +6,7 @@ from GUI.ball import Ball
 from GUI.scoreboard import ScoreBoard
 from constants import *
 from decision_making.manual_policy import ManualBehaviour
+from decision_making.FSM.fsm_policy import FSM
 
 class Simulation:
     def __init__(self) -> None:
@@ -13,13 +14,15 @@ class Simulation:
         self.opponent = Player()
         self.ball = Ball()
         self.ally_behaviour = ManualBehaviour()
+        self.opponent_behaviour = FSM()
         self.scoreboard = ScoreBoard()
         self.clock = pygame.time.Clock()
         self.clock.tick()
     def update(self):
         ally_action = self.ally_behaviour.get_action(self.get_state())
+        opp_action = self.opponent_behaviour.get_action(self.get_state())
         self.ally.update(ally_action)
-        #self.opponent.update(None)
+        self.opponent.update(opp_action)
         self.ball.update(None)
     
     def draw(self, screen):
