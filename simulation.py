@@ -32,8 +32,6 @@ class Simulation:
     
     def draw(self, screen: Surface):
         screen = self.__draw_elements__(screen, self.game_elements)
-        #screen = self.__draw_player__(screen, self.opponent)
-        #screen = self.__draw_player__(screen, self.ally)
         screen = self.scoreboard.draw(screen, self.clock.tick())
         return screen
 
@@ -55,7 +53,7 @@ class Simulation:
         return screen
     
     def __draw_element__ (self, screen: Surface, element: GameElement)->Surface:
-        sprite = element.get_sprite()
+        sprite = pygame.transform.rotate(element.get_sprite(), element.get_orientation())
         rect = sprite.get_rect()
         rect.center = self.__c_to_p__(element.get_pos())
         screen.blit(source=sprite, dest=rect)
