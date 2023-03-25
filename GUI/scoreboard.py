@@ -44,7 +44,7 @@ class ScoreBoard:
     def __create_scores__(self):
         surfs = [self.frame.subsurface(SCORES_DIG_POS[2*k], (2*DIGIT_WIDTH, CLOCK_FRAME_HEIGHT)) for k in range(2)]
         digs = [surfs[i].subsurface((k*DIGIT_WIDTH,0),(DIGIT_WIDTH, CLOCK_FRAME_HEIGHT)) for i in range(2) for k in range(2)]
-        return {"ally": 12, "opponent": 34}, {"ally": [digs[0], digs[1]], "opponent": [digs[2], digs[3]]}
+        return {"ally": 00, "opponent": 00}, {"ally": [digs[0], digs[1]], "opponent": [digs[2], digs[3]]}
 
     def __update_scores__(self):
         for k in ["ally", "opponent"]:
