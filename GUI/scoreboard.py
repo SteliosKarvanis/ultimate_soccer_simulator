@@ -10,7 +10,6 @@ class ScoreBoard:
         self.score = {"ally": 0, "opponent": 0}
         self.frame = pygame.image.load("resources/scoreboard.png")
         self.frame = pygame.transform.smoothscale_by(self.frame,frame_height/self.frame.get_height())
-        self.__draw_clock_colon__()
         self.time = 0 # tracks time in ms
         # keeps the appropriate representation for the scoreboard
         self.clock = {"min": [0,0], "sec": [0,0], "ms": 0}
@@ -69,17 +68,6 @@ class ScoreBoard:
             [clock_entries.append(digits[i]) for i in self.clock.get(k)]
         for i, pos in enumerate(CLOCK_DIGIT_POSITIONS):
             self.frame.blit(clock_entries[i],pos)
-
-    # is kept fixed, could be edited into the sprite
-    def __draw_clock_colon__(self):
-        background = pygame.Surface((round(DIGIT_WIDTH/2),CLOCK_FRAME_HEIGHT))
-        background.fill(BLACK)
-        white_sqr = pygame.Surface((round(DIGIT_WIDTH/10),round(DIGIT_WIDTH/10)))
-        white_sqr.fill(WHITE)
-        center = background.get_rect().center
-        background.blit(white_sqr,(center[0]-white_sqr.get_width()/2,center[1]-2*white_sqr.get_height()))
-        background.blit(white_sqr,(center[0]-white_sqr.get_width()/2,center[1]+white_sqr.get_height()))
-        self.frame.blit(background,(CLOCK_CENTER[0]-background.get_width()/2,CLOCK_CENTER[1]-background.get_height()/2))
 
     
 class ScoreUpdateError(Exception):

@@ -1,12 +1,13 @@
 import pygame
 from pygame import Surface
-from typing import Tuple, Optional, Dict
+from utils.types import GameElement
+from typing import Tuple, Optional
 from constants import *
 import math
 
-class Player(pygame.sprite.Sprite):
+class Player(pygame.sprite.Sprite, GameElement):
     def __init__(
-        self, initial_pos: Tuple = (0, 0), orientation: float = 0, color=WHITE, scale=1
+        self, initial_pos: Tuple = (0, 0), orientation: float = 0, color=colors.get("white"), scale=1
     ):
         super().__init__()
         self.size = (5, 5)
@@ -16,52 +17,33 @@ class Player(pygame.sprite.Sprite):
         self.speed = 0.3
         self.ang_speed = 0.3
         self.spin_speed = 2
-        self._pose = {
-            "x": initial_pos[0],
-            "y": initial_pos[1],
-            "orientation": orientation,
-        }
-
-    def get_pos(self) -> Tuple:
-        return self._pose.get("x"), self._pose.get("y")
-
-    def get_orientation(self) -> float:
-        return self._pose.get("orientation")
-
-    def get_pose(self) -> Tuple:
-        return self.get_pos(), self.get_orientation()
+        self._x, self._y = initial_pos
+        self._orientation = orientation
 
     def get_sprite(self) -> Surface:
         return self._surface
-
-    def get_sprite_pos(self) -> Tuple[float, float]:
-        return (
-            self.get_pos()[0] - self.size[0] / 2,
-            self.get_pos()[1] + self.size[1] / 2,
-        )
     
     def update(self, action):
         pose_updates = self.__next_pose(action)
         
-        for k in self._pose.keys():
-            update = pose_updates.get(k)
-            if isinstance(update, float):
-                self._pose.update({k: update})
+        updated_values = []
+        for i, update in enumerate(pose_updates):
+            if not isinstance(update, float):
+                updated_values.append(self.get_pose()[i])
+            else:
+                updated_values.append(update)
 
-    def __next_pose(self, action) -> Dict[str,Optional[float]]:
+        self._orientation, self._x, self._y = tuple(updated_values)
+
+
+    def __next_pose(self, action) -> Tuple[Optional[float]]:
         rotate, forward, spin = action
         if spin:
-            return {
-                "orientation": (self._pose.get("orientation") - self.spin_speed) % 360,
-                "x": None,
-                "y": None,
-            }
+            return ((self._orientation - self.spin_speed) % 360, None, None)
         else:
-            return {
-                "orientation": (self._pose.get("orientation") - rotate * self.ang_speed) % 360,
-                "x": self._pose.get("x")
-                + math.cos(self._pose.get("orientation") * math.pi / 180) * self.speed * forward,
-                "y": self._pose.get("y")
-                + math.sin(self._pose.get("orientation") * math.pi / 180) * self.speed * forward,
-            }
+            return (
+                (self._orientation - rotate * self.ang_speed) % 360,
+                self._x + math.cos(self._orientation * math.pi / 180) * self.speed * forward,
+                self._y + math.sin(self._orientation * math.pi / 180) * self.speed * forward
+                )
 
