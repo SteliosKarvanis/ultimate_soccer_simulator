@@ -10,7 +10,7 @@ from decision_making.manual_policy import ManualBehaviour
 from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
 from utils.types import Point, GameElement
-
+from GUI.field import draw_field
 
 class Simulation:
     def __init__(self, config: Configuration, boundary: Surface) -> None:
@@ -43,6 +43,7 @@ class Simulation:
     def draw(self, screen: Surface):
         screen = self.__draw_elements__(screen, self.game_elements)
         screen = self.scoreboard.draw(screen, self.clock.tick())
+        screen = draw_field(screen, (640, 436))
         return screen
 
     def get_state(self) -> Dict:
