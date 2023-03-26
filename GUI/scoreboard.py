@@ -1,7 +1,6 @@
 from typing import Dict, List
 import pygame
 from pygame import Surface
-from constants import *
 from math import floor
 from utils.digits import digits, DIGIT_WIDTH, CLOCK_FRAME_HEIGHT
 

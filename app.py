@@ -1,6 +1,5 @@
 import pygame
 from pygame.event import Event
-from constants import *
 from GUI.menu import Menu
 from simulation import Simulation
 from GUI.button import Button

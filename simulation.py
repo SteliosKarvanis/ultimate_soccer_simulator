@@ -5,7 +5,7 @@ from typing import Dict, Tuple
 from GUI.player import Player
 from GUI.ball import Ball
 from GUI.scoreboard import ScoreBoard
-from constants import *
+from pygame.colordict import THECOLORS as colors
 from decision_making.manual_policy import ManualBehaviour
 from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig

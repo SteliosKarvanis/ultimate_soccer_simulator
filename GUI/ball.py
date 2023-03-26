@@ -1,7 +1,6 @@
 import pygame
 from pygame import Surface
 from utils.types import GameElement
-from constants import *
 
 class Ball(pygame.sprite.Sprite, GameElement):
     def __init__(self):
@@ -11,7 +10,6 @@ class Ball(pygame.sprite.Sprite, GameElement):
         self._orientation = 0
         self._radius = 2
         self._sprite = pygame.image.load("resources/ball.png")
-        self._sprite.set_colorkey(BACKGROUND_COLOR)
         self._sprite = pygame.transform.scale(self._sprite, (30, 30))
 
     def update(self, action):

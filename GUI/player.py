@@ -4,10 +4,12 @@ from pygame import Surface
 from pygame.sprite import Group
 from utils.types import GameElement
 from typing import Tuple, Optional, List
-from constants import *
+from pygame.colordict import THECOLORS as colors
 import math
 from utils.agent_actions import Action
 from decision_making.abstract_policy import AbstractBehaviour
+
+PLAYER_SPIN_COUNTDOWN = 200
 
 class Player(pygame.sprite.Sprite, GameElement):
     def __init__(
@@ -25,12 +27,21 @@ class Player(pygame.sprite.Sprite, GameElement):
         self._orientation = orientation
         self.coordinate_convert = coordinate_conversion
         self.behaviour = behaviour
+        self.spin_count = 0
 
     def get_sprite(self) -> Surface:
         return self._surface
     
     def update(self, boundary: Surface, elements: Group, world_state: Dict):
-        action = self.behaviour.get_action(world_state)
+        restart_spin = False
+        if self.__should_spin_in_delay():
+            action = Action(spin=1)
+        else:
+            action = self.behaviour.get_action(world_state)
+            if action.spin:
+                restart_spin = True
+        self.__update_spin_count(restart_spin)
+            
         pose_updates = self.__next_pose(action)
         
         updated_values = []
@@ -59,3 +70,14 @@ class Player(pygame.sprite.Sprite, GameElement):
         new_rect.center = self.coordinate_convert((updates[1], updates[2]))
         return boundary.get_rect().contains(new_rect)
 
+    def __should_spin_in_delay(self) -> bool:
+        if self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN:
+            return True
+        return False
+
+    def __update_spin_count(self, restart_spin: bool) -> None:
+        if restart_spin or self.spin_count >= PLAYER_SPIN_COUNTDOWN:
+            self.spin_count = 0
+        
+        if restart_spin or (self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN):
+            self.spin_count += 1

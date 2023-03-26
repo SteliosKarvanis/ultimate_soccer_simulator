@@ -1,8 +1,6 @@
 from typing import Sequence
-from pygame import Surface
-from pygame import transform
-from constants import *
-
+from pygame import Surface, transform
+from pygame.colordict import THECOLORS as colors
 DIGIT_WIDTH = 15
 CLOCK_FRAME_HEIGHT = 35
 

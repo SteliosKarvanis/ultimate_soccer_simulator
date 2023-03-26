@@ -6,7 +6,6 @@ from decision_making.abstract_policy import AbstractBehaviour
 class FSM(AbstractBehaviour):
     def __init__(self) -> None:
         super().__init__()
-        self.spin_count = 0
         self.state = FollowBall()
 
     def get_action(self, world_state: Dict) -> Action:
