@@ -2,9 +2,11 @@ import pygame
 from constants import *
 from typing import Dict
 from utils.agent_actions import Action
+from decision_making.abstract_policy import AbstractBehaviour
 
-class ManualBehaviour:
+class ManualBehaviour(AbstractBehaviour):
     def __init__(self) -> None:
+        super().__init__()
         self.spin_count = 0
 
     def get_action(self, world_state: Dict) -> Action:

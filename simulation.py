@@ -20,24 +20,23 @@ class Simulation:
         self.field_coordinate_scale = self.configs.field_size[0] / 100
         self.ally = Player(
             self.__to_boundary_coord__,
-            scale=self.field_coordinate_scale, color=colors.get("darkblue")
+            scale=self.field_coordinate_scale, color=colors.get("darkblue"),
+            behaviour=ManualBehaviour(),
         )
         self.opponent = Player(
             self.__to_boundary_coord__,
-            scale=self.field_coordinate_scale, color=colors.get("darkred")
+            scale=self.field_coordinate_scale, color=colors.get("darkred"),
+            behaviour=FSM(),
         )
         self.ball = Ball()
         self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
-        self.ally_behaviour = ManualBehaviour()
-        self.opponent_behaviour = FSM()
         self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
         self.clock = pygame.time.Clock()
         self.clock.tick(self.FPS)
 
     def update(self):
-        ally_action = self.ally_behaviour.get_action(self.get_state())
-        self.ally.update(ally_action, self.boundary, self.game_elements)
-        # self.opponent.update(None)
+        self.ally.update(self.boundary, self.game_elements, self.get_state())
+        self.opponent.update(self.boundary, self.game_elements, self.get_state())
         self.ball.update(None)
 
     def draw(self, screen: Surface):

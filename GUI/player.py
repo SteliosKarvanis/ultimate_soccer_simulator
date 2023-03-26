@@ -1,3 +1,4 @@
+from typing import Dict
 import pygame
 from pygame import Surface
 from pygame.sprite import Group
@@ -6,10 +7,11 @@ from typing import Tuple, Optional, List
 from constants import *
 import math
 from utils.agent_actions import Action
+from decision_making.abstract_policy import AbstractBehaviour
 
 class Player(pygame.sprite.Sprite, GameElement):
     def __init__(
-        self, coordinate_conversion, initial_pos: Tuple = (0, 0), orientation: float = 0, color=colors.get("white"), scale=1
+        self, coordinate_conversion, initial_pos: Tuple = (0, 0), orientation: float = 0, color:pygame.color = colors.get("white"), scale=1, behaviour: AbstractBehaviour = AbstractBehaviour(),
     ):
         super().__init__()
         self.size = (5, 5)
@@ -22,11 +24,13 @@ class Player(pygame.sprite.Sprite, GameElement):
         self._x, self._y = initial_pos
         self._orientation = orientation
         self.coordinate_convert = coordinate_conversion
+        self.behaviour = behaviour
 
     def get_sprite(self) -> Surface:
         return self._surface
     
-    def update(self, action: Action, boundary: Surface, elements: Group):
+    def update(self, boundary: Surface, elements: Group, world_state: Dict):
+        action = self.behaviour.get_action(world_state)
         pose_updates = self.__next_pose(action)
         
         updated_values = []

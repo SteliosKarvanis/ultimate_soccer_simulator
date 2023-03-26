@@ -6,11 +6,8 @@ class FollowBall(AbstractState):
     def __init__(self) -> None:
         super().__init__()
     
-    def next_state(self, world_state: Dict):
-        pass
+    def next_state(self, world_state: Dict) -> AbstractState:
+        return self
     
     def run(self, world_state: Dict) -> Action:
-        action = Action()
-        action.forward = 1
-        action.rotate = 1
-        return action        
+        return Action(rotate=1)
