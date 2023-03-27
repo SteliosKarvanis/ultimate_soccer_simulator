@@ -2,6 +2,7 @@ from typing import Dict
 from abc import ABC
 from utils.agent_actions import Action
 
+
 class AbstractBehaviour(ABC):
     def __init__(self) -> None:
         super().__init__()

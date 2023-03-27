@@ -1,7 +1,8 @@
-import pygame 
+import pygame
 from typing import Dict
 from utils.agent_actions import Action
 from decision_making.abstract_policy import AbstractBehaviour
+
 
 class ManualBehaviour(AbstractBehaviour):
     def __init__(self) -> None:
@@ -20,5 +21,5 @@ class ManualBehaviour(AbstractBehaviour):
             action.forward += 1
         if keys[pygame.K_DOWN]:
             action.forward -= 1
-            
+
         return action

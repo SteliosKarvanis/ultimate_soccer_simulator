@@ -2,10 +2,11 @@ import pygame
 from pygame import Surface
 from utils.types import GameElement
 
+
 class Ball(pygame.sprite.Sprite, GameElement):
     def __init__(self):
         super().__init__()
-        self._x, self._y = (0,0)
+        self._x, self._y = (0, 0)
         self._vel = 0
         self._orientation = 0
         self._radius = 2

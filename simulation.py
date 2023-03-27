@@ -12,6 +12,7 @@ from utils.configs import Configuration, SimulConfig
 from utils.types import Point, GameElement
 from GUI.field import draw_field
 
+
 class Simulation:
     def __init__(self, config: Configuration, boundary: Surface) -> None:
         self.configs = SimulConfig.generate_from_config(config)
@@ -20,12 +21,14 @@ class Simulation:
         self.field_coordinate_scale = self.configs.field_size[0] / 100
         self.ally = Player(
             self.__to_boundary_coord__,
-            scale=self.field_coordinate_scale, color=colors.get("darkblue"),
+            scale=self.field_coordinate_scale,
+            color=colors.get("darkblue"),
             behaviour=ManualBehaviour(),
         )
         self.opponent = Player(
             self.__to_boundary_coord__,
-            scale=self.field_coordinate_scale, color=colors.get("darkred"),
+            scale=self.field_coordinate_scale,
+            color=colors.get("darkred"),
             behaviour=FSM(),
         )
         self.ball = Ball()
@@ -60,9 +63,7 @@ class Simulation:
         return screen
 
     def __draw_element__(self, screen: Surface, element: GameElement) -> Surface:
-        sprite = pygame.transform.rotate(
-            element.get_sprite(), element.get_orientation()
-        )
+        sprite = pygame.transform.rotate(element.get_sprite(), element.get_orientation())
         rect = sprite.get_rect()
         rect.center = self.__boundary_to_screen__(element.get_pos())
         screen.blit(source=sprite, dest=rect)

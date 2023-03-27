@@ -3,6 +3,7 @@ from utils.agent_actions import Action
 from decision_making.FSM.states.follow_ball import FollowBall
 from decision_making.abstract_policy import AbstractBehaviour
 
+
 class FSM(AbstractBehaviour):
     def __init__(self) -> None:
         super().__init__()
