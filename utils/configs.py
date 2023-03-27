@@ -1,10 +1,15 @@
 from dataclasses import dataclass, field
 from typing import Tuple
 
+FPS = 60
+SAMPLE_TIME = 1/FPS
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 800
+SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 @dataclass(frozen=True)
 class Configuration:
-    screen_res: Tuple[int, int] = (1280, 800)
+    screen_res: Tuple[int, int] = SCREEN_SIZE
     screen_to_field_ratio: float = field(kw_only=True, default=0.9)
     field_size: Tuple[int, int] = field(init=False)
     status_bar_height: int = field(init=False)
@@ -19,7 +24,7 @@ class Configuration:
 @dataclass(frozen=True)
 class SimulConfig(Configuration):
     scoreboard_height: int = field(init=False)
-    FPS: int = field(kw_only=True, default=60)
+    FPS: int = field(kw_only=True, default=FPS)
 
     def __post_init__(self):
         super().__post_init__()
