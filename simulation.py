@@ -12,6 +12,7 @@ from utils.configs import Configuration, SimulConfig
 from utils.types import Point, GameElement
 from GUI.field import draw_field
 from world_state import WorldState
+from utils.utils import get_screen_size
 
 
 class Simulation:
@@ -81,7 +82,7 @@ class Simulation:
 
     def __to_boundary_coord__(self, point: Point) -> Point:
         pixels = [0, 0]
-        w, h = self.configs.field_size
+        w, h = get_screen_size()
         pixels[0] = w / 2 + point[0] * self.field_coordinate_scale
         pixels[1] = h / 2 - point[1] * self.field_coordinate_scale
         return tuple(pixels)
