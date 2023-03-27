@@ -45,9 +45,9 @@ class Simulation:
         self.ball.update(None)
 
     def draw(self, screen: Surface):
+        screen = draw_field(screen, (640, 436))
         screen = self.__draw_elements__(screen, self.game_elements)
         screen = self.scoreboard.draw(screen, self.clock.tick())
-        screen = draw_field(screen, (640, 436))
         return screen
 
     def get_state(self) -> WorldState:
