@@ -2,14 +2,15 @@ from dataclasses import dataclass, field
 from typing import Tuple
 
 FPS = 60
-SAMPLE_TIME = 1/FPS
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 800
-SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
+SAMPLE_TIME = 1 / FPS
+INITIAL_SCREEN_WIDTH = 1280
+INITIAL_SCREEN_HEIGHT = 800
+INITIAL_SCREEN_SIZE = (INITIAL_SCREEN_WIDTH, INITIAL_SCREEN_HEIGHT)
+
 
 @dataclass(frozen=True)
 class Configuration:
-    screen_res: Tuple[int, int] = SCREEN_SIZE
+    screen_res: Tuple[int, int] = INITIAL_SCREEN_SIZE
     screen_to_field_ratio: float = field(kw_only=True, default=0.9)
     field_size: Tuple[int, int] = field(init=False)
     status_bar_height: int = field(init=False)

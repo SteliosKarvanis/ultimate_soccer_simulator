@@ -11,6 +11,7 @@ from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
 from utils.types import Point, GameElement
 from GUI.field import draw_field
+from world_state import WorldState
 
 
 class Simulation:
@@ -28,6 +29,7 @@ class Simulation:
         self.opponent = Player(
             self.__to_boundary_coord__,
             scale=self.field_coordinate_scale,
+            initial_pos=(-10, 10),
             color=colors.get("darkred"),
             behaviour=FSM(),
         )
@@ -48,14 +50,14 @@ class Simulation:
         screen = draw_field(screen, (640, 436))
         return screen
 
-    def get_state(self) -> Dict:
-        return {
-            "player_pose": self.ally.get_pose(),
-            "opponent_pose": self.opponent.get_pose(),
-            "ball_pos": self.ball.get_pos(),
-            "ball_vel": self.ball._vel,
-            "score": self.scoreboard.get_score(),
-        }
+    def get_state(self) -> WorldState:
+        return WorldState(
+            player_pos=self.ally.get_pos(),
+            player_orientation=self.ally.get_orientation(),
+            opponent_pos=self.opponent.get_pos(),
+            opponent_orientation=self.opponent.get_orientation(),
+            ball_pos=self.ball.get_pos(),
+        )
 
     def __draw_elements__(self, screen: Surface, group: pygame.sprite.Group) -> Surface:
         for sprite in group.sprites():

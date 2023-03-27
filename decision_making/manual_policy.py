@@ -2,13 +2,14 @@ import pygame
 from typing import Dict
 from utils.agent_actions import Action
 from decision_making.abstract_policy import AbstractBehaviour
+from world_state import WorldState
 
 
 class ManualBehaviour(AbstractBehaviour):
     def __init__(self) -> None:
         super().__init__()
 
-    def get_action(self, world_state: Dict) -> Action:
+    def get_action(self, world_state: WorldState) -> Action:
         action = Action()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:

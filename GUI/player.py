@@ -9,6 +9,7 @@ import math
 from utils.agent_actions import Action
 from decision_making.abstract_policy import AbstractBehaviour
 from utils.configs import SAMPLE_TIME
+from world_state import WorldState
 
 PLAYER_SPIN_COUNTDOWN = 200
 PLAYER_LINEAR_SPEED = 3
@@ -44,7 +45,7 @@ class Player(pygame.sprite.Sprite, GameElement):
     def get_sprite(self) -> Surface:
         return self._surface
 
-    def update(self, boundary: Surface, elements: Group, world_state: Dict):
+    def update(self, boundary: Surface, elements: Group, world_state: WorldState):
         restart_spin = False
         if self.__should_spin_in_delay():
             action = Action(spin=1)
@@ -72,8 +73,8 @@ class Player(pygame.sprite.Sprite, GameElement):
         else:
             return (
                 (self._orientation - action.rotate * self.ang_speed * SAMPLE_TIME) % 360,
-                self._x + math.cos(self._orientation * math.pi / 180) * self.speed  * SAMPLE_TIME * action.forward,
-                self._y + math.sin(self._orientation * math.pi / 180) * self.speed  * SAMPLE_TIME * action.forward,
+                self._x + math.cos(self._orientation * math.pi / 180) * self.speed * SAMPLE_TIME * action.forward,
+                self._y + math.sin(self._orientation * math.pi / 180) * self.speed * SAMPLE_TIME * action.forward,
             )
 
     def __is_valid_update__(self, updates: List[float], boundary: Surface, elements: Group) -> bool:
