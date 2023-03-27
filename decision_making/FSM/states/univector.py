@@ -15,7 +15,8 @@ class UnivectorNavigate(AbstractState):
         return self
 
     def run(self, world_state: WorldState) -> Action:
-        ball_pose = world_state.ball_pos[0], world_state.ball_pos[1], 0
+        # orientation, x, y
+        ball_pose = 0, world_state.ball_pos[0], world_state.ball_pos[1]
         desired_angle = self.univector.compute_move_to_goal_field(ball_pose, world_state.opponent_pos)
         action = Action(forward=1)
         current_angle = world_state.player_orientation * pi / 180
