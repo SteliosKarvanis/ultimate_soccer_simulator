@@ -10,6 +10,10 @@ from utils.agent_actions import Action
 from decision_making.abstract_policy import AbstractBehaviour
 
 PLAYER_SPIN_COUNTDOWN = 200
+PLAYER_LINEAR_SPEED = 0.3
+PLAYER_ANGULAR_SPEED = 0.7
+PLAYER_SPIN_SPEED = 2
+PLAYER_SIZE = (4, 4)
 
 
 class Player(pygame.sprite.Sprite, GameElement):
@@ -23,13 +27,13 @@ class Player(pygame.sprite.Sprite, GameElement):
         behaviour: AbstractBehaviour = AbstractBehaviour(),
     ):
         super().__init__()
-        self.size = (5, 5)
+        self.size = PLAYER_SIZE
         self._surface = Surface((self.size[0] * scale, self.size[1] * scale))
         self._surface.set_colorkey(colors.get("black"))
         self._surface.fill(color)
-        self.speed = 0.3
-        self.ang_speed = 0.7
-        self.spin_speed = 2
+        self.speed = PLAYER_LINEAR_SPEED
+        self.ang_speed = PLAYER_ANGULAR_SPEED
+        self.spin_speed = PLAYER_SPIN_SPEED
         self._x, self._y = initial_pos
         self._orientation = orientation
         self.coordinate_convert = coordinate_conversion
@@ -85,6 +89,5 @@ class Player(pygame.sprite.Sprite, GameElement):
     def __update_spin_count(self, restart_spin: bool) -> None:
         if restart_spin or self.spin_count >= PLAYER_SPIN_COUNTDOWN:
             self.spin_count = 0
-
         if restart_spin or (self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN):
             self.spin_count += 1

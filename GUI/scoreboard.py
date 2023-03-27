@@ -4,10 +4,10 @@ from pygame import Surface
 from math import floor
 from utils.digits import digits, DIGIT_WIDTH, CLOCK_FRAME_HEIGHT
 
-__CLOCK_POS__ = (93, 61)
-CLOCK_DIG_POS = [(__CLOCK_POS__[0] + k * DIGIT_WIDTH, __CLOCK_POS__[1]) for k in [0, 1, 2.5, 3.5]]
-__ALLY_SCORE_POS__ = (32, 51)
-SCORES_DIG_POS = [(__ALLY_SCORE_POS__[0] + k * DIGIT_WIDTH, __ALLY_SCORE_POS__[1]) for k in [0, 1, 10.5, 11.5]]
+CLOCK_POS = (93, 61)
+CLOCK_DIG_POS = [(CLOCK_POS[0] + k * DIGIT_WIDTH, CLOCK_POS[1]) for k in [0, 1, 2.5, 3.5]]
+ALLY_SCORE_POS = (32, 51)
+SCORES_DIG_POS = [(ALLY_SCORE_POS[0] + k * DIGIT_WIDTH, ALLY_SCORE_POS[1]) for k in [0, 1, 10.5, 11.5]]
 
 
 class ScoreBoard:
