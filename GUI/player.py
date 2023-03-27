@@ -8,11 +8,12 @@ from pygame.colordict import THECOLORS as colors
 import math
 from utils.agent_actions import Action
 from decision_making.abstract_policy import AbstractBehaviour
+from utils.configs import SAMPLE_TIME
 
 PLAYER_SPIN_COUNTDOWN = 200
-PLAYER_LINEAR_SPEED = 0.3
-PLAYER_ANGULAR_SPEED = 0.7
-PLAYER_SPIN_SPEED = 2
+PLAYER_LINEAR_SPEED = 3
+PLAYER_ANGULAR_SPEED = 35
+PLAYER_SPIN_SPEED = 100
 PLAYER_SIZE = (4, 4)
 
 
@@ -67,12 +68,12 @@ class Player(pygame.sprite.Sprite, GameElement):
 
     def __next_pose(self, action: Action) -> Tuple[Optional[float]]:
         if action.spin:
-            return ((self._orientation - self.spin_speed) % 360, None, None)
+            return ((self._orientation - self.spin_speed * SAMPLE_TIME) % 360, None, None)
         else:
             return (
-                (self._orientation - action.rotate * self.ang_speed) % 360,
-                self._x + math.cos(self._orientation * math.pi / 180) * self.speed * action.forward,
-                self._y + math.sin(self._orientation * math.pi / 180) * self.speed * action.forward,
+                (self._orientation - action.rotate * self.ang_speed * SAMPLE_TIME) % 360,
+                self._x + math.cos(self._orientation * math.pi / 180) * self.speed  * SAMPLE_TIME * action.forward,
+                self._y + math.sin(self._orientation * math.pi / 180) * self.speed  * SAMPLE_TIME * action.forward,
             )
 
     def __is_valid_update__(self, updates: List[float], boundary: Surface, elements: Group) -> bool:
