@@ -20,7 +20,7 @@ class GameElement:
         return self._orientation
 
     def get_pose(self) -> Tuple[float, float, float]:
-        return self._x, self._y, self._orientation
+        return self._orientation, self._x, self._y
 
     def get_sprite(self) -> Surface:
         raise NotImplementedError("This method is abstract and must be implemented in derived classes")
