@@ -43,7 +43,7 @@ class Simulation:
     def update(self):
         self.ally.update(self.boundary, self.game_elements, self.get_state())
         self.opponent.update(self.boundary, self.game_elements, self.get_state())
-        self.ball.update(None)
+        self.ball.update()
 
     def draw(self, screen: Surface):
         screen = draw_field(screen, (640, 436))
