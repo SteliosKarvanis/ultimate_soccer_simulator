@@ -1,10 +1,10 @@
 from typing import Tuple
 from pygame import Surface
-
-
-class Point(Tuple[float, float]):
-    def __init__(self) -> None:
-        super().__init__()
+from pygame.math import Vector2
+from abc import abstractmethod
+import pygame
+from typing import List
+from GUI.field import *
 
 
 class GameElement:
@@ -12,8 +12,10 @@ class GameElement:
         self._x = 0
         self._y = 0
         self._orientation = 0
+        self.side = 0
+        self._surface = Surface((self.side, self.side))
 
-    def get_pos(self) -> Point:
+    def get_pos(self) -> Vector2:
         return self._x, self._y
 
     def get_orientation(self) -> float:
@@ -22,5 +24,20 @@ class GameElement:
     def get_pose(self) -> Tuple[float, float, float]:
         return self._orientation, self._x, self._y
 
-    def get_sprite(self) -> Surface:
-        raise NotImplementedError("This method is abstract and must be implemented in derived classes")
+    def __is_valid_update__(self, updates: Tuple[float, float, float]) -> bool:
+        rotation, next_x, next_y = updates
+        new_sprite = pygame.transform.rotate(self._surface, rotation)
+        rect = new_sprite.get_rect()
+        rect.center = next_x, next_y
+        if (
+            rect.top < -TOP_FIELD_Y
+            or rect.left < LEFT_FRONT_GOAL_X
+            or rect.right > -LEFT_FRONT_GOAL_X
+            or rect.bottom > TOP_FIELD_Y
+        ):
+            return False
+        return True
+
+    @abstractmethod
+    def get_surface(self) -> Surface:
+        pass

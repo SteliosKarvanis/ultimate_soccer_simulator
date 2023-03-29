@@ -1,7 +1,6 @@
-import math
 import pygame
 from pygame import Surface
-from typing import Dict, Tuple
+from typing import Tuple
 from GUI.player import Player
 from GUI.ball import Ball
 from GUI.scoreboard import ScoreBoard
@@ -9,28 +8,25 @@ from pygame.colordict import THECOLORS as colors
 from decision_making.manual_policy import ManualBehaviour
 from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
-from utils.types import Point, GameElement
-from GUI.field import draw_field
+from utils.types import GameElement
+from GUI.field import FIELD_POINTS
 from world_state import WorldState
-from utils.utils import get_screen_size
+from pygame.math import Vector2
+
+MARGIN = 40
+LINE_THICKNESS = 10
 
 
 class Simulation:
-    def __init__(self, config: Configuration, boundary: Surface) -> None:
+    def __init__(self, config: Configuration, surface: Surface) -> None:
         self.configs = SimulConfig.generate_from_config(config)
-        self.boundary = boundary
+        self.surface = surface
         self.FPS = self.configs.FPS
-        self.field_coordinate_scale = self.configs.field_size[0] / 100
         self.ally = Player(
-            self.__to_boundary_coord__,
-            scale=self.field_coordinate_scale,
             color=colors.get("darkblue"),
             behaviour=ManualBehaviour(),
         )
         self.opponent = Player(
-            self.__to_boundary_coord__,
-            scale=self.field_coordinate_scale,
-            initial_pos=(-10, 10),
             color=colors.get("darkred"),
             behaviour=FSM(),
         )
@@ -41,12 +37,12 @@ class Simulation:
         self.clock.tick(self.FPS)
 
     def update(self):
-        self.ally.update(self.boundary, self.game_elements, self.get_state())
-        self.opponent.update(self.boundary, self.game_elements, self.get_state())
+        self.ally.update(self.get_state())
+        self.opponent.update(self.get_state())
         self.ball.update()
 
-    def draw(self, screen: Surface):
-        screen = draw_field(screen, (640, 436))
+    def draw(self, screen: Surface) -> Surface:
+        screen = self.draw_field(screen)
         screen = self.__draw_elements__(screen, self.game_elements)
         screen = self.scoreboard.draw(screen, self.clock.tick())
         return screen
@@ -66,23 +62,29 @@ class Simulation:
         return screen
 
     def __draw_element__(self, screen: Surface, element: GameElement) -> Surface:
-        sprite = pygame.transform.rotate(element.get_sprite(), element.get_orientation())
+        sprite = pygame.transform.rotate(element.get_surface(), element.get_orientation())
         rect = sprite.get_rect()
-        rect.center = self.__boundary_to_screen__(element.get_pos())
+        rect.center = self.field_to_pix_coord(element.get_pos())
         screen.blit(source=sprite, dest=rect)
         return screen
 
-    def __boundary_to_screen__(self, point: Point) -> Point:
-        pixels = [0, 0]
-        boundary_coord = self.__to_boundary_coord__(point)
-        offset = self.configs.status_bar_height
-        pixels[0] = boundary_coord[0]
-        pixels[1] = offset + boundary_coord[1]
-        return tuple(pixels)
+    def pix_to_field_coord(self, point: Vector2) -> Vector2:
+        point[1] *= -1
+        return point - self.get_field_center()
 
-    def __to_boundary_coord__(self, point: Point) -> Point:
-        pixels = [0, 0]
-        w, h = get_screen_size()
-        pixels[0] = w / 2 + point[0] * self.field_coordinate_scale
-        pixels[1] = h / 2 - point[1] * self.field_coordinate_scale
-        return tuple(pixels)
+    def field_to_pix_coord(self, point: Vector2) -> Tuple[int, int]:
+        point = point + self.get_field_center()
+        point[1] *= -1
+        return point
+
+    def get_field_center(self) -> Vector2:
+        center = self.surface.get_bounding_rect().center
+        # TODO: fix the math behind the line below
+        return Vector2(center[0], -center[1] - self.scoreboard.frame.get_height() / 2 - MARGIN)
+
+    def draw_field(self, screen: Surface) -> Surface:
+        field_points = [self.field_to_pix_coord(Vector2(x)) for x in FIELD_POINTS]
+        pygame.draw.lines(
+            surface=screen, color=pygame.Color("white"), closed=True, points=field_points, width=LINE_THICKNESS
+        )
+        return screen
