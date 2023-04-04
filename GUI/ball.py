@@ -16,8 +16,8 @@ class Ball(pygame.sprite.Sprite, GameElement):
     def __init__(self, initial_pos: Tuple = (0, 0)):
         super().__init__()
         self._x, self._y = initial_pos
-        self._vel = 40
-        self._orientation = 180
+        self._vel = 0
+        self._orientation = 0
         self._radius = BALL_RADIUS
         self._surface = pygame.image.load("resources/ball.png")
         self._surface = pygame.transform.scale(self._surface, (BALL_DIAMETER, BALL_DIAMETER))
