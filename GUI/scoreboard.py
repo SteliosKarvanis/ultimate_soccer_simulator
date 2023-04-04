@@ -28,7 +28,7 @@ class ScoreBoard:
             raise ScoreUpdateError("Cannot register multiple goals at once")
         if curr_score >= 99:
             raise ScoreUpdateError("Scoreboard cannot count with 3 digits")
-        self.score.update((character, curr_score + 1))
+        self.score.update([(character, curr_score + 1)])
         self.__update_assets__(frame_height)
 
     def draw(self, screen: Surface, time: int):

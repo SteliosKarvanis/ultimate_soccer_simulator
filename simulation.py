@@ -39,7 +39,10 @@ class Simulation:
     def update(self):
         self.ally.update(self.get_state())
         self.opponent.update(self.get_state())
-        self.ball.update()
+        goal_state=self.ball.update()
+        if goal_state!="None":
+            self.scoreboard.update(character=goal_state,frame_height=self.configs.scoreboard_height)
+
 
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
