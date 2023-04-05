@@ -123,7 +123,7 @@ class Ball(pygame.sprite.Sprite, GameElement):
             return "None"
     
     def collision_management(self,element: Player)->bool:
-            r_params=(element._x,element._y,int(element.velocity_orientation),element.speed)
+            r_params=(element._x,element._y,int(element.velocity_orientation),element.vel)
             x,y,orientation,v=change_reference_frame((self._x,self._y,self._orientation,self._vel),r_params)
             l1,l2=element.size
             if x-BALL_RADIUS<=l1/2 and x+BALL_RADIUS>=-l1/2 and y<l2/2 and y>-l2/2:
