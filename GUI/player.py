@@ -20,7 +20,7 @@ PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 class Player(pygame.sprite.Sprite, GameElement):
     def __init__(
         self,
-        initial_pos: Tuple = (0, 0),
+        initial_pos: Tuple = (-300, 0),
         orientation: float = 0,
         color: pygame.color = colors.get("white"),
         behaviour: AbstractBehaviour = AbstractBehaviour(),
@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite, GameElement):
         self._orientation = orientation
         self.behaviour = behaviour
         self.spin_count = 0
+        self.velocity_orientation=orientation
 
     def get_surface(self) -> Surface:
         return self._surface
@@ -59,13 +60,19 @@ class Player(pygame.sprite.Sprite, GameElement):
 
     def __next_pose(self, action: Action) -> Tuple[float]:
         if action.spin:
+            self.velocity_orientation=(self._orientation - self.spin_speed * SAMPLE_TIME) % 360
             return ((self._orientation - self.spin_speed * SAMPLE_TIME) % 360, self._x, self._y)
         else:
+            if action.forward>=0:
+                self.velocity_orientation=(self._orientation - action.rotate * self.ang_speed * SAMPLE_TIME) % 360
+            else:
+                self.velocity_orientation=(180 + self._orientation - action.rotate * self.ang_speed * SAMPLE_TIME) % 360
             return (
                 (self._orientation - action.rotate * self.ang_speed * SAMPLE_TIME) % 360,
                 self._x + math.cos(self._orientation * math.pi / 180) * self.speed * SAMPLE_TIME * action.forward,
                 self._y + math.sin(self._orientation * math.pi / 180) * self.speed * SAMPLE_TIME * action.forward,
             )
+        
 
     def __should_spin_in_delay(self) -> bool:
         if self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN:

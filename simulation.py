@@ -39,6 +39,8 @@ class Simulation:
     def update(self):
         self.ally.update(self.get_state())
         self.opponent.update(self.get_state())
+        if not self.ball.collision_management(self.ally):
+            l=self.ball.collision_management(self.opponent)
         goal_state=self.ball.update()
         if goal_state!="None":
             self.scoreboard.update(character=goal_state,frame_height=self.configs.scoreboard_height)
