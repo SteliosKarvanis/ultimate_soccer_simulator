@@ -38,6 +38,7 @@ class Player(pygame.sprite.Sprite, GameElement):
         self.behaviour = behaviour
         self.spin_count = 0
         self.velocity_orientation=orientation
+        self.vel=0
 
     def get_surface(self) -> Surface:
         return self._surface
@@ -59,6 +60,7 @@ class Player(pygame.sprite.Sprite, GameElement):
         # print(pose_updates)
 
     def __next_pose(self, action: Action) -> Tuple[float]:
+        self.vel=abs(self.speed*action.forward)
         if action.spin:
             self.velocity_orientation=(self._orientation - self.spin_speed * SAMPLE_TIME) % 360
             return ((self._orientation - self.spin_speed * SAMPLE_TIME) % 360, self._x, self._y)
