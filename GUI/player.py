@@ -10,9 +10,9 @@ from utils.configs import SAMPLE_TIME
 from world_state import WorldState
 
 PLAYER_SPIN_COUNTDOWN = 200
-PLAYER_LINEAR_SPEED = 30
+PLAYER_LINEAR_SPEED = 50
 PLAYER_ANGULAR_SPEED = 35
-PLAYER_SPIN_SPEED = 100
+PLAYER_SPIN_SPEED = 200
 PLAYER_SIDE = 40
 PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 
@@ -40,17 +40,20 @@ class Player(pygame.sprite.Sprite, GameElement):
         self.velocity_orientation = orientation
         self.vel = 0
 
+    def get_surface(self) -> Surface:
+        return self._surface
+
     def update(self, world_state: WorldState):
         restart_spin = False
-        if self.__should_spin_in_delay():
+        if self.__should_spin_in_delay__():
             action = Action(spin=1)
         else:
             action = self.behaviour.get_action(world_state)
             if action.spin:
                 restart_spin = True
-        self.__update_spin_count(restart_spin)
+        self.__update_spin_count__(restart_spin)
 
-        pose_updates = self.__next_pose(action)
+        pose_updates = self.__next_pose__(action)
         if self.__is_valid_update__(pose_updates):
             self._orientation, self._x, self._y = pose_updates
 
@@ -72,12 +75,12 @@ class Player(pygame.sprite.Sprite, GameElement):
                 self._y + math.sin(self._orientation * math.pi / 180) * self.speed * SAMPLE_TIME * action.forward,
             )
 
-    def __should_spin_in_delay(self) -> bool:
+    def __should_spin_in_delay__(self) -> bool:
         if self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN:
             return True
         return False
 
-    def __update_spin_count(self, restart_spin: bool) -> None:
+    def __update_spin_count__(self, restart_spin: bool) -> None:
         if restart_spin or self.spin_count >= PLAYER_SPIN_COUNTDOWN:
             self.spin_count = 0
         if restart_spin or (self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN):

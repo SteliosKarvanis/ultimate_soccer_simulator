@@ -8,8 +8,8 @@ from GUI.player import Player
 import math
 
 
-BALL_RADIUS = 10
-FRICTION = 5
+BALL_RADIUS = 12
+FRICTION = 4
 BALL_DIAMETER = 2 * BALL_RADIUS
 EPSILON = 1
 
