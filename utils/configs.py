@@ -17,7 +17,9 @@ class Configuration:
 
     def __post_init__(self):
         object.__setattr__(
-            self, "field_size", (self.screen_res[0], round(self.screen_res[1] * self.screen_to_field_ratio))
+            self,
+            "field_size",
+            (self.screen_res[0], round(self.screen_res[1] * self.screen_to_field_ratio)),
         )
         object.__setattr__(self, "status_bar_height", self.screen_res[1] - self.field_size[1])
 

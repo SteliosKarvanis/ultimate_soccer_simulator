@@ -37,8 +37,13 @@ class App:
         # Draw background
         self.__update_assets__()
         self._screen.blit(self.background_image, (0, 0))
-        self._screen.blit(self.lawn, (0, self.menu.get_config("status_bar_height")))
-
+        self._screen.blit(
+            self.lawn,
+            (
+                0,
+                self.menu.get_config("status_bar_height"),
+            ),
+        )
         if self._running:
             self._screen = self.button.draw(self._screen)
             self._screen = self.simulation.draw(self._screen)
@@ -63,6 +68,13 @@ class App:
 
     def __update_assets__(self):
         self.background_image = pygame.transform.scale(
-            self.background_image, (self.menu.get_config("screen_res")[0], self.menu.get_config("status_bar_height"))
+            self.background_image,
+            (
+                self.menu.get_config("screen_res")[0],
+                self.menu.get_config("status_bar_height"),
+            ),
         )
-        self.lawn = pygame.transform.scale(self.lawn, self.menu.get_config("field_size"))
+        self.lawn = pygame.transform.scale(
+            self.lawn,
+            self.menu.get_config("field_size"),
+        )
