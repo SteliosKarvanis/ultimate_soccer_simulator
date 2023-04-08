@@ -10,13 +10,14 @@ from GUI.field import *
 
 
 class GameElement(Sprite):
-    def __init__(self, *groups, **kwargs) -> None:
+    def __init__(self, *groups, color=colors.get("white"),**kwargs) -> None:
         super().__init__()
         self._x, self._y = (0, 0)
         self._orientation = 0
         self._vel = 0
         self.size = (1,1)
         self.inertia = 1
+        self.asset = ''
         for group in groups:
             if isinstance(group, Group):
                 self.add(group)
@@ -26,7 +27,12 @@ class GameElement(Sprite):
                 self.__dict__.update({k: v})
             elif self.__dict__.get(alt_key, None) != None:
                 self.__dict__.update({alt_key: v})
-        self._surface = Surface(self.size)
+        if self.asset != '':
+            self._surface = pygame.image.load(self.asset)
+            self._surface = pygame.transform.scale_by(self._surface, self.size/self._surface.get_height())
+        else:
+            self._surface = Surface(self.size)
+            self._surface.fill(color)
         self._surface.set_colorkey(colors.get("black"))
 
     def get_pos(self) -> Vector2:
