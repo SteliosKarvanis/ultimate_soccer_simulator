@@ -10,7 +10,7 @@ from utils.configs import SAMPLE_TIME
 from world_state import WorldState
 
 PLAYER_SPIN_COUNTDOWN = 200
-PLAYER_LINEAR_SPEED = 50
+PLAYER_LINEAR_SPEED = 80
 PLAYER_ANGULAR_SPEED = 35
 PLAYER_SPIN_SPEED = 200
 PLAYER_SIDE = 40
@@ -75,6 +75,8 @@ class Player(pygame.sprite.Sprite, GameElement):
                 self._y + math.sin(self._orientation * math.pi / 180) * self.speed * SAMPLE_TIME * action.forward,
             )
         
+    def __on_rebound__(self):
+        pass
 
     def __should_spin_in_delay__(self) -> bool:
         if self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN:
