@@ -1,14 +1,16 @@
 from typing import Tuple
 from pygame import Surface
 from pygame.math import Vector2
+from pygame.sprite import Group, Sprite
 from abc import abstractmethod
 import pygame
 from typing import List
 from GUI.field import *
 
 
-class GameElement:
+class GameElement(Sprite):
     def __init__(self) -> None:
+        super().__init__()
         self._x = 0
         self._y = 0
         self._orientation = 0

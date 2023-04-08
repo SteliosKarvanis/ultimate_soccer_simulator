@@ -15,12 +15,12 @@ class ManualBehaviour(AbstractBehaviour):
         if keys[pygame.K_SPACE]:
             action.spin = 1
         if keys[pygame.K_LEFT]:
-            action.rotate -= 1
+            action.rotate = -1
         if keys[pygame.K_RIGHT]:
-            action.rotate += 1
-        if keys[pygame.K_UP]:
-            action.forward += 1
+            action.rotate = 1
         if keys[pygame.K_DOWN]:
-            action.forward -= 1
+            action.forward = -1
+        if keys[pygame.K_UP]:
+            action.forward = 1
 
         return action

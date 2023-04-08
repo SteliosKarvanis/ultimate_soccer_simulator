@@ -29,6 +29,8 @@ class Simulation:
         self.opponent = Player(
             color=colors.get("darkred"),
             behaviour=FSM(),
+            initial_pos=(300,0),
+            orientation=180
         )
         self.ball = Ball()
         self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
