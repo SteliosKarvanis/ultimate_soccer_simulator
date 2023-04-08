@@ -38,6 +38,5 @@ class GameElement:
             return False
         return True
 
-    @abstractmethod
     def get_surface(self) -> Surface:
-        pass
+        return self._surface
