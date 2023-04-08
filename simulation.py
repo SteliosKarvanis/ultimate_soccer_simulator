@@ -21,19 +21,22 @@ class Simulation:
     def __init__(self, config: Configuration, surface: Surface) -> None:
         self.configs = SimulConfig.generate_from_config(config)
         self.surface = surface
+        self.game_elements = pygame.sprite.Group()
         self.FPS = self.configs.FPS
         self.ally = Player(
+            self.game_elements,
             color=colors.get("darkblue"),
             behaviour=ManualBehaviour(),
         )
         self.opponent = Player(
+            self.game_elements,
             color=colors.get("darkred"),
-            behaviour=FSM(),
             initial_pos=(300,0),
-            orientation=180
+            behaviour=FSM(),
+            orientation=180,
         )
-        self.ball = Ball()
-        self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
+        self.players = pygame.sprite.Group(self.ally, self.opponent)
+        self.ball = Ball(self.players, self.game_elements)
         self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
         self.clock = pygame.time.Clock()
         self.clock.tick(self.FPS)
@@ -41,11 +44,9 @@ class Simulation:
     def update(self):
         self.ally.update(self.get_state())
         self.opponent.update(self.get_state())
-        if not self.ball.collision_management(self.ally):
-            l = self.ball.collision_management(self.opponent)
         goal_state = self.ball.update()
-        if goal_state != "None":
-            self.scoreboard.update(character=goal_state, frame_height=self.configs.scoreboard_height)
+        #if goal_state != "None":
+            #self.scoreboard.update(character=goal_state, frame_height=self.configs.scoreboard_height)
 
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)

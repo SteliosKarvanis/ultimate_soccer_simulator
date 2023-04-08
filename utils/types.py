@@ -2,6 +2,7 @@ from typing import Tuple
 from pygame import Surface
 from pygame.math import Vector2
 from pygame.sprite import Group, Sprite
+from pygame.colordict import THECOLORS as colors
 from abc import abstractmethod
 import pygame
 from typing import List
@@ -9,13 +10,24 @@ from GUI.field import *
 
 
 class GameElement(Sprite):
-    def __init__(self) -> None:
+    def __init__(self, *groups, **kwargs) -> None:
         super().__init__()
-        self._x = 0
-        self._y = 0
+        self._x, self._y = (0, 0)
         self._orientation = 0
-        self.side = 0
-        self._surface = Surface((self.side, self.side))
+        self._vel = 0
+        self.size = (1,1)
+        self.inertia = 1
+        for group in groups:
+            if isinstance(group, Group):
+                self.add(group)
+        for k, v in kwargs.items():
+            alt_key = '_' + k
+            if self.__dict__.get(k, None) != None:
+                self.__dict__.update({k: v})
+            elif self.__dict__.get(alt_key, None) != None:
+                self.__dict__.update({alt_key: v})
+        self._surface = Surface(self.size)
+        self._surface.set_colorkey(colors.get("black"))
 
     def get_pos(self) -> Vector2:
         return self._x, self._y
