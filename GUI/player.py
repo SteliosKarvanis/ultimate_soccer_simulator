@@ -94,7 +94,6 @@ class Player(GameElement):
                     self.spin_action = Action(spin=1)
                 else:
                     self.spin_count -= 1
-                    print(self._orientation)
                     return self.__next_pose__(self.spin_action)
 
             case PlayerState.PLAYING:
