@@ -1,6 +1,6 @@
 from typing import Tuple
 import pygame
-from pygame import Surface, sprite
+from pygame import sprite
 from utils.types import GameElement
 from GUI.player import Player
 from GUI.field import field, goals

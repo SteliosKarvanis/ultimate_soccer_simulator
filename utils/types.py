@@ -1,9 +1,8 @@
-from typing import Tuple, Optional, List
+from typing import Tuple, List
 from pygame import Surface
 from pygame.math import Vector2
 from pygame.sprite import Group, Sprite
 from pygame.colordict import THECOLORS as colors
-from abc import abstractmethod
 import pygame
 from GUI.field import *
 from utils.collision_handler import CollisionType

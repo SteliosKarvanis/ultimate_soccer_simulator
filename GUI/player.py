@@ -1,5 +1,4 @@
 import pygame
-from pygame import Surface
 from utils.types import GameElement, colors, CollisionType
 from typing import Tuple
 import math

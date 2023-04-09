@@ -1,5 +1,4 @@
-from pygame import Surface, Vector2, Rect
-import pygame
+from pygame import Rect
 
 LINE_THICKNESS = 10
 FIELD_LENGTH_X = 1200
