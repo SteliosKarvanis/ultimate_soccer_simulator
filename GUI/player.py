@@ -40,6 +40,7 @@ class Player(GameElement):
         self.rebound_count = 0
         self.rebound_action = Action()
         self.previous_forward = 1
+        self.spin_action = Action(spin=1)
 
     def update(self, world_state: WorldState):
         action = self.behaviour.get_action(world_state)
@@ -60,9 +61,11 @@ class Player(GameElement):
                     case PlayerState.ON_SPIN:
                         if self.spin_count <= 0:
                             self.state = PlayerState.PLAYING
+                            self.spin_action = Action(spin=1)
                         else:
                             self.spin_count -= 1
-                            action = Action(spin=1)
+                            action = self.spin_action
+                            
                     case PlayerState.PLAYING:
                         if action.forward != 0:
                             self.previous_forward = action.forward
@@ -92,6 +95,8 @@ class Player(GameElement):
     def __next_pose__(self, action: Action) -> Tuple[float]:
         if action.spin != 0 or self.state == PlayerState.ON_SPIN:
             if self.state != PlayerState.ON_SPIN:
+                if self.state == PlayerState.ON_REBOUND:
+                    self.spin_action = self.rebound_action
                 self.state = PlayerState.ON_SPIN
                 self.spin_count = 5 
             return (
