@@ -65,18 +65,21 @@ class Player(GameElement):
                         else:
                             self.spin_count -= 1
                             action = self.spin_action
-                            
+
                     case PlayerState.PLAYING:
                         if action.forward != 0:
                             self.previous_forward = action.forward
 
             case CollisionType.WITH_SCENERY:
-                self.state = PlayerState.ON_REBOUND
-                self.rebound_count = 25
-                self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward, spin=-action.spin)
-                pose_updates = self.__next_pose__(self.rebound_action)
-                if self.rebound_action.forward != 0:
-                    self.previous_forward = self.rebound_action.forward
+                if self.state == PlayerState.ON_REBOUND:
+                    pose_updates = (0,0,0)
+                else:
+                    self.state = PlayerState.ON_REBOUND
+                    self.rebound_count = 25
+                    self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward, spin=-action.spin)
+                    pose_updates = self.__next_pose__(self.rebound_action)
+                    if self.rebound_action.forward != 0:
+                        self.previous_forward = self.rebound_action.forward
 
             case CollisionType.OF_PLAYERS:
                 self.state = PlayerState.ON_FEINT
