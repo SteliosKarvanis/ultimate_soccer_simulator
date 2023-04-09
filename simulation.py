@@ -29,7 +29,7 @@ class Simulation:
         surface: Surface,
     ) -> None:
         self.configs = SimulConfig.generate_from_config(config)
-        self.surface = surface
+        self.field = surface
         self.game_elements = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
         self.FPS = self.configs.FPS
@@ -51,6 +51,7 @@ class Simulation:
         self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
         self.clock = pygame.time.Clock()
         self.clock.tick(self.FPS)
+        self.lines = self.draw_field()
 
     def update(self):
         self.ally.update(self.get_state())
@@ -59,11 +60,10 @@ class Simulation:
         # if goal_state != "None":
         # self.scoreboard.update(character=goal_state, frame_height=self.configs.scoreboard_height)
 
-    def draw(self, screen: Surface) -> Surface:
-        screen = self.draw_field(screen)
-        screen = self.__draw_elements__(screen, self.game_elements)
-        screen = self.scoreboard.draw(screen, self.clock.tick())
-        return screen
+    def draw(self):
+        self.draw_field()
+        self.__draw_elements__(self.game_elements)
+        self.scoreboard.draw(self.field.get_abs_parent(), self.clock.tick())
 
     def get_state(self) -> WorldState:
         return WorldState(
@@ -76,48 +76,34 @@ class Simulation:
 
     def __draw_elements__(
         self,
-        screen: Surface,
         group: pygame.sprite.Group,
     ) -> Surface:
         for sprite in group.sprites():
-            screen = self.__draw_element__(screen, sprite)
-        return screen
+            self.__draw_element__(sprite)
 
     def __draw_element__(
         self,
-        screen: Surface,
         element: GameElement,
     ) -> Surface:
         sprite = element.get_sprite()
         rect = sprite.get_rect()
         rect.center = self.field_to_pix_coord(element.get_pos())
-        screen.blit(source=sprite, dest=rect)
-        return screen
-
-    def pix_to_field_coord(self, point: Vector2) -> Vector2:
-        point[1] *= -1
-        return point - self.get_field_center()
+        self.field.get_parent().blit(source=sprite, dest=rect)
 
     def field_to_pix_coord(self, point: Vector2) -> Tuple[int, int]:
-        point = point + self.get_field_center()
-        point[1] *= -1
+        point = [point[0] + self.get_field_center()[0], self.get_field_center()[1] - point[1]]
         return point
 
     def get_field_center(self) -> Vector2:
-        center = self.surface.get_bounding_rect().center
-        # TODO: fix the math behind the line below
-        return Vector2(
-            center[0],
-            -center[1] - self.scoreboard.frame.get_height() / 2 - MARGIN,
-        )
+        center = self.field.get_rect().center
+        return Vector2(center[0], center[1])
 
-    def draw_field(self, screen: Surface) -> Surface:
-        field_points = [self.field_to_pix_coord(Vector2(x)) for x in FIELD_POINTS]
-        pygame.draw.lines(
-            surface=screen,
+    def draw_field(self) -> pygame.Rect:
+        field_points = [Vector2(self.field_to_pix_coord(x)) for x in FIELD_POINTS]
+        return pygame.draw.lines(
+            surface=self.field.get_parent(),
             color=pygame.Color("white"),
             closed=True,
             points=field_points,
             width=LINE_THICKNESS,
         )
-        return screen

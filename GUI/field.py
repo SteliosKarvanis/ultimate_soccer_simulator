@@ -1,3 +1,7 @@
+from pygame import Surface, Vector2, Rect
+import pygame
+
+LINE_THICKNESS = 10
 FIELD_LENGTH_X = 1200
 FIELD_LENGTH_Y = 640
 GOAL_LENGTH_X = 80
@@ -22,3 +26,9 @@ FIELD_POINTS = [
     (LEFT_FRONT_GOAL_X, -TOP_FIELD_Y),
     (LEFT_FRONT_GOAL_X, -TOP_GOAL_Y),
 ]
+
+goals = {
+    "left": Rect(LEFT_GOAL_X, -TOP_GOAL_Y, GOAL_LENGTH_X, GOAL_LENGTH_Y),
+    "right": Rect(-LEFT_FRONT_GOAL_X, -TOP_GOAL_Y, GOAL_LENGTH_X, GOAL_LENGTH_Y),
+}
+field = Rect((LEFT_FRONT_GOAL_X, -TOP_FIELD_Y), (2 * abs(LEFT_FRONT_GOAL_X), FIELD_LENGTH_Y))

@@ -22,7 +22,13 @@ class PlayerState(Enum):
 
 
 class Player(GameElement):
-    def __init__(self, *groups, initial_pos=(-300, 0), color: pygame.color = colors.get("white"), **kwargs):
+    def __init__(
+        self,
+        *groups,
+        initial_pos=(-300, 0),
+        color: pygame.color = colors.get("white"),
+        **kwargs,
+    ):
         self.ang_speed = PLAYER_ANGULAR_SPEED
         kwargs.update({"_x": initial_pos[0], "_y": initial_pos[1]})
         super().__init__(*groups, color=color, size=PLAYER_SIZE, inertia=100, **kwargs)
@@ -33,43 +39,59 @@ class Player(GameElement):
         self.state = PlayerState.PLAYING
         self.rebound_count = 0
         self.rebound_action = Action()
+        self.previous_forward = 1
 
     def update(self, world_state: WorldState):
         action = self.behaviour.get_action(world_state)
         pose_updates = self.__next_pose__(action)
-
         match self.__get_update__(pose_updates):
             case CollisionType.NONE | CollisionType.BALL_PLAYER:
                 if self.state == PlayerState.ON_REBOUND or self.state == PlayerState.ON_FEINT:
                     if self.rebound_count <= 0:
                         self.state = PlayerState.PLAYING
+                        if action.forward != 0:
+                            self.previous_forward = action.forward
+
                     else:
                         self.rebound_count -= 1
                         pose_updates = self.__next_pose__(self.rebound_action)
+
+                else:
+                    if action.forward != 0:
+                        self.previous_forward = action.forward
 
             case CollisionType.WITH_SCENERY:
                 self.state = PlayerState.ON_REBOUND
                 self.rebound_count = 25
                 self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward)
                 pose_updates = self.__next_pose__(self.rebound_action)
+                if self.rebound_action.forward != 0:
+                    self.previous_forward = self.rebound_action.forward
 
             case CollisionType.OF_PLAYERS:
                 self.state = PlayerState.ON_FEINT
                 self.rebound_count = 10
                 self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward)
                 pose_updates = self.__next_pose__(self.rebound_action)
+                if self.rebound_action.forward != 0:
+                    self.previous_forward = self.rebound_action.forward
 
         self._orientation, self._x, self._y = pose_updates
         self._sprite = pygame.transform.rotate(self.image, self._orientation)
         self.mask = pygame.mask.from_surface(self._sprite)
+        self.rect = self._sprite.get_rect()
         self.rect.center = self._x, self._y
 
     def __next_pose__(self, action: Action) -> Tuple[float]:
         if action.spin:
-            return ((self._orientation - self._spin_speed * SAMPLE_TIME) % 360, self._x, self._y)
+            return (
+                (self._orientation - self._spin_speed * SAMPLE_TIME) % 360,
+                self._x,
+                self._y,
+            )
         else:
             return (
-                (self._orientation - action.rotate * self.ang_speed * SAMPLE_TIME) % 360,
-                self._x + math.cos(self._orientation * math.pi / 180) * self._vel * SAMPLE_TIME * action.forward,
-                self._y + math.sin(self._orientation * math.pi / 180) * self._vel * SAMPLE_TIME * action.forward,
+                (self._orientation - action.rotate * self.ang_speed * SAMPLE_TIME + 180 * (action.forward * self.previous_forward < 0)) % 360,
+                self._x + math.cos(self._orientation * math.pi / 180) * self._vel * SAMPLE_TIME * (action.forward != 0),
+                self._y + math.sin(self._orientation * math.pi / 180) * self._vel * SAMPLE_TIME * (action.forward != 0),
             )

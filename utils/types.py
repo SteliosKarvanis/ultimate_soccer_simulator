@@ -31,7 +31,7 @@ class GameElement(Sprite):
         if self.asset_path != "":
             img = pygame.image.load(self.asset_path)
             img = pygame.transform.scale_by(img, self.size[1] / img.get_height())
-            self.image = img
+            self.image.blit(img, (0, 0))
         else:
             self.image.fill(color)
         self.image.set_colorkey(colors.get("black"))
@@ -54,30 +54,20 @@ class GameElement(Sprite):
         new_sprite = pygame.transform.rotate(self.image, rotation)
         rect = new_sprite.get_rect()
         rect.center = next_x, next_y
-        if (
-            rect.top < -TOP_FIELD_Y
-            or rect.left < LEFT_FRONT_GOAL_X
-            or rect.right > -LEFT_FRONT_GOAL_X
-            or rect.bottom > TOP_FIELD_Y
-        ):
+        if not field.contains(rect):
             return CollisionType.WITH_SCENERY
         return self.check_collision()
 
     def check_collision(self) -> CollisionType:
         for group in self.groups():
             for element in GameElement.group_collide(self, group):
-                assert(isinstance(element, GameElement))
-                return (
-                    CollisionType.OF_PLAYERS
-                    if isinstance(element, self.__class__)
-                    else CollisionType.BALL_PLAYER
-                )
+                assert isinstance(element, GameElement)
+                return CollisionType.OF_PLAYERS if isinstance(element, self.__class__) else CollisionType.BALL_PLAYER
         return CollisionType.NONE
-    
+
     @staticmethod
     def group_collide(sprite: Sprite, group: Group) -> List[Sprite]:
         return [element for element in pygame.sprite.spritecollide(sprite, group, False, collided=GameElement.collision_handler)]
-
 
     @staticmethod
     def collision_handler(sprite1: Sprite, sprite2: Sprite):
