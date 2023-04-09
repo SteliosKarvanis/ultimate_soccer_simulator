@@ -15,9 +15,10 @@ PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 
 
 class PlayerState(Enum):
-    PLAYING = (1,)
-    ON_REBOUND = (2,)
+    PLAYING = 1
+    ON_REBOUND = 2
     ON_FEINT = 3
+    ON_SPIN = 4
 
 
 class Player(GameElement):
@@ -45,24 +46,31 @@ class Player(GameElement):
         pose_updates = self.__next_pose__(action)
         match self.__get_update__(pose_updates):
             case CollisionType.NONE | CollisionType.BALL_PLAYER:
-                if self.state == PlayerState.ON_REBOUND or self.state == PlayerState.ON_FEINT:
-                    if self.rebound_count <= 0:
-                        self.state = PlayerState.PLAYING
+                match self.state:
+                    case PlayerState.ON_REBOUND | PlayerState.ON_FEINT:
+                        if self.rebound_count <= 0:
+                            self.state = PlayerState.PLAYING
+                            if action.forward != 0:
+                                self.previous_forward = action.forward
+
+                        else:
+                            self.rebound_count -= 1
+                            pose_updates = self.__next_pose__(self.rebound_action)
+
+                    case PlayerState.ON_SPIN:
+                        if self.spin_count <= 0:
+                            self.state = PlayerState.PLAYING
+                        else:
+                            self.spin_count -= 1
+                            action = Action(spin=1)
+                    case PlayerState.PLAYING:
                         if action.forward != 0:
                             self.previous_forward = action.forward
-
-                    else:
-                        self.rebound_count -= 1
-                        pose_updates = self.__next_pose__(self.rebound_action)
-
-                else:
-                    if action.forward != 0:
-                        self.previous_forward = action.forward
 
             case CollisionType.WITH_SCENERY:
                 self.state = PlayerState.ON_REBOUND
                 self.rebound_count = 25
-                self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward)
+                self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward, spin=-action.spin)
                 pose_updates = self.__next_pose__(self.rebound_action)
                 if self.rebound_action.forward != 0:
                     self.previous_forward = self.rebound_action.forward
@@ -70,7 +78,7 @@ class Player(GameElement):
             case CollisionType.OF_PLAYERS:
                 self.state = PlayerState.ON_FEINT
                 self.rebound_count = 10
-                self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward)
+                self.rebound_action = Action(rotate=-action.rotate, forward=-action.forward, spin=-action.spin)
                 pose_updates = self.__next_pose__(self.rebound_action)
                 if self.rebound_action.forward != 0:
                     self.previous_forward = self.rebound_action.forward
@@ -82,9 +90,12 @@ class Player(GameElement):
         self.rect.center = self._x, self._y
 
     def __next_pose__(self, action: Action) -> Tuple[float]:
-        if action.spin:
+        if action.spin != 0 or self.state == PlayerState.ON_SPIN:
+            if self.state != PlayerState.ON_SPIN:
+                self.state = PlayerState.ON_SPIN
+                self.spin_count = 5 
             return (
-                (self._orientation - self._spin_speed * SAMPLE_TIME) % 360,
+                (self._orientation - self._spin_speed * SAMPLE_TIME * action.spin) % 360, #spin is only ever negative when rebounding
                 self._x,
                 self._y,
             )
