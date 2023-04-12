@@ -5,8 +5,7 @@ from utils.types import GameElement
 from GUI.field import LEFT_FRONT_GOAL_X, FIELD_LENGTH_Y, TOP_GOAL_Y
 from utils.configs import SAMPLE_TIME
 from GUI.player import Player
-import math
-
+from math import radians, cos, sin, degrees, sqrt, asin
 
 BALL_RADIUS = 12
 FRICTION = 4
@@ -17,15 +16,15 @@ EPSILON = 1
 def change_reference_frame(params: tuple, rf_params: tuple) -> tuple:
     rf_x, rf_y, rf_theta, rf_v = rf_params
     x0, y0, theta0, v0 = params
-    e_vx = v0 * math.cos(theta0 * math.pi / 180) - rf_v * math.cos(rf_theta * math.pi / 180)
-    e_vy = v0 * math.sin(theta0 * math.pi / 180) - rf_v * math.sin(rf_theta * math.pi / 180)
+    e_vx = v0 * cos(radians(theta0)) - rf_v * cos(radians(rf_theta))
+    e_vy = v0 * sin(radians(theta0)) - rf_v * sin(radians(rf_theta))
     e_x = x0 - rf_x
     e_y = y0 - rf_y
-    v = math.sqrt(e_vx**2 + e_vy**2)
+    v = sqrt(e_vx**2 + e_vy**2)
     if e_vx > 0.0 and v != 0:
-        theta = (int(math.asin(e_vy / v) * 180 / math.pi) - rf_theta) % 360
+        theta = degrees(int(asin(e_vy / v)) - rf_theta) % 360
     elif e_vx < 0.0 and v != 0:
-        theta = (180 - int(math.asin(e_vy / v) * 180 / math.pi) - rf_theta) % 360
+        theta = degrees(180 - int(asin(e_vy / v)) - rf_theta) % 360
     else:
         if e_vy > 0.0:
             theta = (90 - rf_theta) % 360
@@ -33,8 +32,8 @@ def change_reference_frame(params: tuple, rf_params: tuple) -> tuple:
             theta = (270 - rf_theta) % 360
         else:
             theta = 0
-    x = e_x * math.cos(rf_theta * math.pi / 180) + e_y * math.sin(rf_theta * math.pi / 180)
-    y = -e_x * math.sin(rf_theta * math.pi / 180) + e_y * math.cos(rf_theta * math.pi / 180)
+    x = e_x * cos(radians(rf_theta)) + e_y * sin(radians(rf_theta))
+    y = -e_x * sin(radians(rf_theta)) + e_y * cos(radians(rf_theta))
     new_params = (x, y, theta, v)
     return new_params
 
@@ -42,15 +41,15 @@ def change_reference_frame(params: tuple, rf_params: tuple) -> tuple:
 def back_to_original_frame(params: tuple, rf_params: tuple) -> tuple:
     rf_x, rf_y, rf_theta, rf_v = rf_params
     x, y, theta, v = params
-    x0 = x * math.cos(rf_theta * math.pi / 180) - y * math.sin(rf_theta * math.pi / 180) + rf_x
-    y0 = x * math.sin(rf_theta * math.pi / 180) + y * math.cos(rf_theta * math.pi / 180) + rf_y
-    vx0 = v * math.cos((theta + rf_theta) * math.pi / 180) + rf_v * math.cos(rf_theta * math.pi / 180)
-    vy0 = v * math.sin((theta + rf_theta) * math.pi / 180) + rf_v * math.sin(rf_theta * math.pi / 180)
-    v0 = math.sqrt(vx0**2 + vy0**2)
+    x0 = x * cos(radians(rf_theta)) - y * sin(radians(rf_theta)) + rf_x
+    y0 = x * sin(radians(rf_theta)) + y * cos(radians(rf_theta)) + rf_y
+    vx0 = v * cos(radians(theta + rf_theta)) + rf_v * cos(radians(rf_theta))
+    vy0 = v * sin(radians(theta + rf_theta)) + rf_v * sin(radians(rf_theta))
+    v0 = sqrt(vx0**2 + vy0**2)
     if vx0 > 0.0:
-        theta0 = (int(math.asin(vy0 / v0) * 180 / math.pi)) % 360
+        theta0 = (int(degrees(asin(vy0 / v0)))) % 360
     elif vx0 < 0.0:
-        theta0 = (180 - int(math.asin(vy0 / v0) * 180 / math.pi)) % 360
+        theta0 = (180 - int(degrees(asin(vy0 / v0)))) % 360
     else:
         if vy0 > 0.0:
             theta0 = 90
@@ -78,8 +77,8 @@ class Ball(pygame.sprite.Sprite, GameElement):
                 self._orientation = (360 - self._orientation) % 360
             elif collision_side == "right" or collision_side == "left":
                 self._orientation = (180 - self._orientation + 360) % 360
-            self._x = self._x + math.cos(self._orientation * math.pi / 180) * self._vel * SAMPLE_TIME
-            self._y = self._y + math.sin(self._orientation * math.pi / 180) * self._vel * SAMPLE_TIME
+            self._x = self._x + cos(radians(self._orientation)) * self._vel * SAMPLE_TIME
+            self._y = self._y + sin(radians(self._orientation)) * self._vel * SAMPLE_TIME
             self._vel = self._vel - FRICTION * SAMPLE_TIME
         else:
             self._vel = 0.0
