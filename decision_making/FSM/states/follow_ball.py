@@ -16,9 +16,10 @@ class FollowBall(AbstractState):
 
     def run(self, world_state: WorldState) -> Action:
         relative_position = Vector2(
-            world_state.ball_pos[0] - world_state.opponent_pos[0], world_state.ball_pos[1] - world_state.opponent_pos[1]
+            world_state.ball_state[0] - world_state.opponent_state[0],
+            world_state.ball_state[1] - world_state.opponent_state[1],
         )
-        orientation = world_state.opponent_orientation
+        orientation = world_state.opponent_state[2]
         xaxis = Vector2(1, 0)
         angle0 = (int(xaxis.angle_to(relative_position))) % 360
         control_angle = (orientation - angle0) % 360

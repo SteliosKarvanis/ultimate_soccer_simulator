@@ -53,11 +53,9 @@ class Simulation:
 
     def get_state(self) -> WorldState:
         return WorldState(
-            player_pos=self.ally.get_pos(),
-            player_orientation=self.ally.get_orientation(),
-            opponent_pos=self.opponent.get_pos(),
-            opponent_orientation=self.opponent.get_orientation(),
-            ball_pos=self.ball.get_pos(),
+            player_state=self.ally.get_state(),
+            opponent_state=self.opponent.get_state(),
+            ball_state=self.ball.get_state(),
         )
 
     def __draw_elements__(self, screen: Surface, group: pygame.sprite.Group) -> Surface:
@@ -87,7 +85,7 @@ class Simulation:
         return Vector2(center[0], -center[1] - self.scoreboard.frame.get_height() / 2 - MARGIN)
 
     def draw_field(self, screen: Surface) -> Surface:
-        field_points = [self.field_to_pix_coord(Vector2(x)) for x in FIELD_POINTS]
+        field_points = [self.field_to_pix_coord(x) for x in FIELD_POINTS]
         pygame.draw.lines(
             surface=screen, color=pygame.Color("white"), closed=True, points=field_points, width=LINE_THICKNESS
         )
