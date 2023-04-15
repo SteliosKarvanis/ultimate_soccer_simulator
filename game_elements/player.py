@@ -26,14 +26,10 @@ class Player(AbstractElement):
         behaviour: AbstractBehaviour = AbstractBehaviour(),
     ):
         super().__init__(initial_pos=initial_pos, orientation=orientation, vel=0, size=PLAYER_SIZE)
-        self._surface = Surface(self.size)
         self._surface.set_colorkey(colors.get("black"))
         self._surface.fill(color)
         self.behaviour = behaviour
         self.spin_count = 0
-
-    def get_surface(self) -> Surface:
-        return self._surface
 
     def update(self, world_state: WorldState):
         restart_spin = False
