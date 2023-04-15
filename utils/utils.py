@@ -1,6 +1,7 @@
 from typing import Tuple
 from math import pi, cos, sin, acos, sqrt
 
+
 def rotate_vector(x0: float, y0: float, angle_rad: float) -> Tuple[float, float]:
     x = x0 * cos(angle_rad) + y0 * sin(angle_rad)
     y = -x0 * sin(angle_rad) + y0 * cos(angle_rad)

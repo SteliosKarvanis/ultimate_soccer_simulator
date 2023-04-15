@@ -125,18 +125,18 @@ class Ball(AbstractElement):
 
     def collision_management(self, element: Player) -> bool:
         r_params = (element._x, element._y, int(element._orientation), element._vel)
-        l1, l2 = element.size
+        side_x, side_y = element.size
         collided = False
         # Changing to the referential of the element
         x, y, orientation, v = global_to_element_referential((self._x, self._y, self._orientation, self._vel), r_params)
         v_x, v_y = polar_to_cartesian_vector(v, orientation)
         # Check if has collision
-        if abs(x) < BALL_RADIUS + l2 / 2 and abs(y) < BALL_RADIUS + l2 / 2:
+        if abs(x) < BALL_RADIUS + side_x / 2 and abs(y) < BALL_RADIUS + side_x / 2:
             collided = True
             # Check which side collided
-            y_top = l1 / 2 + BALL_RADIUS
+            y_top = side_y / 2 + BALL_RADIUS
             y_bottom = -y_top
-            x_right = l2 / 2 + BALL_RADIUS
+            x_right = side_x / 2 + BALL_RADIUS
             x_left = -x_right
             # For each vertex, check it is above the line of movement of the ball, for example tr == True, check if the top right vertex is above the movement line of the ball
             tr = (y_top - y + tan(orientation) * (x_right - x)) > 0
@@ -145,19 +145,19 @@ class Ball(AbstractElement):
             bl = (y_bottom - y + tan(orientation) * (x_left - x)) > 0
             # right side colision
             if tr and not br and (orientation > 90 and orientation < 270):
-                x = BALL_RADIUS + l2 / 2 + TOLERANCE
+                x = BALL_RADIUS + side_x / 2 + TOLERANCE
                 v, orientation = cartesian_to_polar_vector(-abs(v_x), v_y)
             # left side colision
             elif tl and not bl and (orientation < 90 or orientation > 270):
-                x = -BALL_RADIUS - l2 / 2 - TOLERANCE
+                x = -BALL_RADIUS - side_x / 2 - TOLERANCE
                 v, orientation = cartesian_to_polar_vector(-abs(v_x), v_y)
             # top side colision
             if tr and not tl and orientation > 180:
-                y = BALL_RADIUS + l1 / 2 + TOLERANCE
+                y = BALL_RADIUS + side_y / 2 + TOLERANCE
                 v, orientation = cartesian_to_polar_vector(v_x, -abs(v_y))
             # bottom side colision
             elif bl and not br and orientation < 180:
-                y = -BALL_RADIUS - l2 / 2 - TOLERANCE
+                y = -BALL_RADIUS - side_y / 2 - TOLERANCE
                 v, orientation = cartesian_to_polar_vector(v_x, -abs(v_y))
         # Back to the global referential
         if collided:
