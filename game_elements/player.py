@@ -55,10 +55,7 @@ class Player(AbstractElement):
             self._orientation = (self._orientation - PLAYER_SPIN_SPEED * SAMPLE_TIME) % 360
             return (self._orientation, self._x, self._y)
         else:
-            if action.forward >= 0:
-                self._orientation = (self._orientation - action.rotate * PLAYER_ANGULAR_SPEED * SAMPLE_TIME) % 360
-            else:
-                self._orientation = (180 + self._orientation - action.rotate * PLAYER_ANGULAR_SPEED * SAMPLE_TIME) % 360
+            self._orientation = (self._orientation - action.rotate * PLAYER_ANGULAR_SPEED * SAMPLE_TIME) % 360
             return (
                 (self._orientation - action.rotate * PLAYER_ANGULAR_SPEED * SAMPLE_TIME) % 360,
                 self._x + cos(radians(self._orientation)) * PLAYER_LINEAR_SPEED * SAMPLE_TIME * action.forward,

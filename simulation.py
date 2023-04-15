@@ -3,7 +3,7 @@ from pygame import Surface
 from typing import Tuple
 from game_elements.player import Player
 from game_elements.ball import Ball
-from game_elements.scoreboard import ScoreBoard
+from GUI.scoreboard import ScoreBoard
 from pygame.colordict import THECOLORS as colors
 from decision_making.manual_policy import ManualBehaviour
 from decision_making.FSM.fsm_policy import FSM
