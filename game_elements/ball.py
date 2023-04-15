@@ -10,6 +10,7 @@ BALL_RADIUS = 12
 FRICTION = 4
 BALL_DIAMETER = 2 * BALL_RADIUS
 TOLERANCE = 10
+BALL_SIZE = (BALL_DIAMETER, BALL_DIAMETER)
 
 
 def rotate_pos(x0: float, y0: float, angle_rad: float) -> Tuple[float, float]:
@@ -87,12 +88,9 @@ def element_ref_to_global_ref(params: tuple, rf_params: tuple) -> tuple:
     return new_params
 
 
-class Ball(pygame.sprite.Sprite, AbstractElement):
+class Ball(AbstractElement):
     def __init__(self, initial_pos: Tuple = (0, 0)):
-        super().__init__()
-        self._x, self._y = initial_pos
-        self._vel = 0
-        self._orientation = 0
+        super().__init__(initial_pos=initial_pos, vel=0, size=BALL_SIZE)
         self._radius = BALL_RADIUS
         self._surface = pygame.image.load("resources/ball.png")
         self._surface = pygame.transform.scale(self._surface, (BALL_DIAMETER, BALL_DIAMETER))
@@ -103,7 +101,7 @@ class Ball(pygame.sprite.Sprite, AbstractElement):
             if collision_side == "up" or collision_side == "down":
                 self._orientation = (360 - self._orientation) % 360
             elif collision_side == "right" or collision_side == "left":
-                self._orientation = (180 - self._orientation + 360) % 360
+                self._orientation = (180 - self._orientation) % 360
             self._x = self._x + cos(radians(self._orientation)) * self._vel * SAMPLE_TIME
             self._y = self._y + sin(radians(self._orientation)) * self._vel * SAMPLE_TIME
             self._vel = self._vel - FRICTION * SAMPLE_TIME
@@ -149,7 +147,7 @@ class Ball(pygame.sprite.Sprite, AbstractElement):
             return "None"
 
     def collision_management(self, element: Player) -> bool:
-        r_params = (element._x, element._y, int(element.velocity_orientation), element.vel)
+        r_params = (element._x, element._y, int(element._orientation), element._vel)
         l1, l2 = element.size
         collided = False
         # Changing to the referential of the element

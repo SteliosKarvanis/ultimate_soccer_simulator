@@ -7,13 +7,22 @@ from typing import List
 from game_elements.field import *
 
 
-class AbstractElement:
-    def __init__(self) -> None:
-        self._x = 0
-        self._y = 0
-        self._orientation = 0
-        self.side = 0
-        self._surface = Surface((self.side, self.side))
+class AbstractElement(
+    pygame.sprite.Sprite,
+):
+    def __init__(
+        self,
+        initial_pos: Tuple[float, float],
+        orientation: float = 0,
+        vel: float = 0,
+        size: Tuple[float, float] = (0, 0),
+    ) -> None:
+        super().__init__()
+        self._x, self._y = initial_pos
+        self._vel = vel
+        self._orientation = orientation
+        self.size = size
+        self._surface = Surface(size)
 
     def get_pos(self) -> Vector2:
         return self._x, self._y
