@@ -33,6 +33,12 @@ class AbstractElement(
     def get_pose(self) -> Tuple[float, float, float]:
         return self._orientation, self._x, self._y
 
+    def get_vel(self) -> float:
+        return self._vel
+
+    def get_state(self) -> Tuple:
+        return self.x, self.y, self._orientation, self._vel
+
     def __is_valid_update__(self, updates: Tuple[float, float, float]) -> bool:
         rotation, next_x, next_y = updates
         new_sprite = pygame.transform.rotate(self._surface, rotation)

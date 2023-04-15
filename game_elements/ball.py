@@ -15,14 +15,14 @@ TOLERANCE = 10
 BALL_SIZE = (BALL_DIAMETER, BALL_DIAMETER)
 
 
-def global_to_element_referential(params: Tuple, rf_params: Tuple) -> Tuple[float, float]:
+def get_state_in_referential(state: Tuple, referential_state: Tuple) -> Tuple[float, float]:
     # Referential pose in world
-    rf_x, rf_y, rf_theta_deg, rf_v = rf_params
+    rf_x, rf_y, rf_theta_deg, rf_v = referential_state
     rf_theta_rad = radians(rf_theta_deg)
     v_rf_x, v_rf_y = polar_to_cartesian_vector(rf_v, rf_theta_rad)
 
     # Pose on global referential
-    x0, y0, theta0_deg, v0 = params
+    x0, y0, theta0_deg, v0 = state
     theta0_rad = radians(theta0_deg)
     v0_x, v0_y = polar_to_cartesian_vector(v0, theta0_rad)
 
@@ -40,14 +40,14 @@ def global_to_element_referential(params: Tuple, rf_params: Tuple) -> Tuple[floa
     return new_params
 
 
-def element_ref_to_global_ref(params: tuple, rf_params: tuple) -> tuple:
+def get_state_from_referential(state: Tuple, referential_state: Tuple) -> Tuple:
     # Referential pose in world
-    rf_x, rf_y, rf_theta_deg, rf_v = rf_params
+    rf_x, rf_y, rf_theta_deg, rf_v = referential_state
     rf_theta_rad = radians(rf_theta_deg)
     rf_v_x, rf_v_y = polar_to_cartesian_vector(rf_v, rf_theta_rad)
 
     # Pose on global referential
-    x0, y0, theta0_deg, v0 = params
+    x0, y0, theta0_deg, v0 = state
     theta0_rad = radians(theta0_deg)
     v0_x, v0_y = polar_to_cartesian_vector(v0, theta0_rad)
 
@@ -124,11 +124,11 @@ class Ball(AbstractElement):
             return "None"
 
     def collision_management(self, element: Player) -> bool:
-        r_params = (element._x, element._y, int(element._orientation), element._vel)
+        referential_state = element.get_state()
         side_x, side_y = element.size
         collided = False
         # Changing to the referential of the element
-        x, y, orientation, v = global_to_element_referential((self._x, self._y, self._orientation, self._vel), r_params)
+        x, y, orientation, v = get_state_in_referential(state=self.get_state(), referential_state=referential_state)
         v_x, v_y = polar_to_cartesian_vector(v, orientation)
         # Check if has collision
         if abs(x) < BALL_RADIUS + side_x / 2 and abs(y) < BALL_RADIUS + side_x / 2:
@@ -161,5 +161,7 @@ class Ball(AbstractElement):
                 v, orientation = cartesian_to_polar_vector(v_x, -abs(v_y))
         # Back to the global referential
         if collided:
-            self._x, self._y, self._orientation, self._vel = element_ref_to_global_ref((x, y, orientation, v), r_params)
+            self._x, self._y, self._orientation, self._vel = get_state_from_referential(
+                state=(x, y, orientation, v), referential_state=referential_state
+            )
         return collided
