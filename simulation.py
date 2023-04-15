@@ -1,17 +1,17 @@
+from typing import Tuple
 import pygame
 from pygame import Surface
-from typing import Tuple
+from pygame.math import Vector2
+from pygame.colordict import THECOLORS as colors
+from GUI.scoreboard import ScoreBoard
+from game_elements.abstract_element import AbstractElement
+from game_elements.field import FIELD_POINTS
 from game_elements.player import Player
 from game_elements.ball import Ball
-from GUI.scoreboard import ScoreBoard
-from pygame.colordict import THECOLORS as colors
 from decision_making.manual_policy import ManualBehaviour
 from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
-from game_elements.abstract_element import AbstractElement
-from game_elements.field import FIELD_POINTS
 from world_state import WorldState
-from pygame.math import Vector2
 
 MARGIN = 40
 LINE_THICKNESS = 10

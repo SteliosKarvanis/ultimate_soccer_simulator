@@ -1,10 +1,6 @@
 from typing import Tuple
-from pygame import Surface
-from pygame.math import Vector2
-from abc import abstractmethod
 import pygame
-from typing import List
-from game_elements.field import *
+from game_elements.field import TOP_FIELD_Y, LEFT_FRONT_GOAL_X
 
 
 class AbstractElement(
@@ -12,7 +8,7 @@ class AbstractElement(
 ):
     def __init__(
         self,
-        initial_pos: Tuple[float, float],
+        initial_pos: Tuple[float, float] = (0, 0),
         orientation: float = 0,
         vel: float = 0,
         size: Tuple[float, float] = (0, 0),
@@ -22,13 +18,13 @@ class AbstractElement(
         self._vel = vel
         self._orientation = orientation
         self.size = size
-        self._surface = Surface(size)
+        self._surface = pygame.Surface(size)
         # Save a copy of initial state
         self.__initial_pos = initial_pos
         self.__initial_vel = vel
         self.__initial_orientation = orientation
 
-    def get_pos(self) -> Vector2:
+    def get_pos(self) -> Tuple[float, float]:
         return self._x, self._y
 
     def get_orientation(self) -> float:
@@ -57,7 +53,7 @@ class AbstractElement(
             return False
         return True
 
-    def get_surface(self) -> Surface:
+    def get_surface(self) -> pygame.Surface:
         return self._surface
 
     def reset_state(self):

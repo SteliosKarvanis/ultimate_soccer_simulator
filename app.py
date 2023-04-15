@@ -1,8 +1,8 @@
 import pygame
 from pygame.event import Event
 from GUI.menu import Menu
-from simulation import Simulation
 from GUI.button import Button
+from simulation import Simulation
 
 
 class App:

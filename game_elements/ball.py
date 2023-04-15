@@ -1,10 +1,10 @@
 from typing import Tuple
+from math import radians, cos, sin, degrees
 import pygame
 from game_elements.abstract_element import AbstractElement
 from game_elements.field import LEFT_FRONT_GOAL_X, FIELD_LENGTH_Y, TOP_GOAL_Y
-from utils.configs import SAMPLE_TIME
 from game_elements.player import Player
-from math import radians, cos, sin, degrees
+from utils.configs import SAMPLE_TIME
 from utils.utils import (
     polar_to_cartesian_vector,
     cartesian_to_polar_vector,

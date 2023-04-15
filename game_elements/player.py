@@ -1,13 +1,12 @@
-import pygame
-from pygame import Surface
-from game_elements.abstract_element import AbstractElement
 from typing import Tuple
+from math import radians, cos, sin
+import pygame
 from pygame.colordict import THECOLORS as colors
 from utils.agent_actions import Action
-from decision_making.abstract_policy import AbstractBehaviour
 from utils.configs import SAMPLE_TIME
+from game_elements.abstract_element import AbstractElement
+from decision_making.abstract_policy import AbstractBehaviour
 from world_state import WorldState
-from math import radians, cos, sin
 
 PLAYER_SPIN_COUNTDOWN = 200
 PLAYER_LINEAR_SPEED = 80
