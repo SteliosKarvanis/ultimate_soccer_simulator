@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Sequence, Tuple
 from math import pi, cos, sin, acos, sqrt
 
 
@@ -23,5 +23,5 @@ def polar_to_cartesian_vector(v: float, angle_rad: float) -> Tuple[float, float]
     return v * cos(angle_rad), v * sin(angle_rad)
 
 
-def translate_vector(x0: float, y0: float, delta_x: float, delta_y: float) -> Tuple[float, float]:
-    return x0 + delta_x, y0 + delta_y
+def translate_vector(vector: Sequence, move: Sequence) -> Tuple[float, float]:
+    return vector[0] + move[0], vector[1] + move[1]
