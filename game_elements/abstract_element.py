@@ -37,7 +37,7 @@ class AbstractElement(
         return self._vel
 
     def get_state(self) -> Tuple:
-        return self.x, self.y, self._orientation, self._vel
+        return self._x, self._y, self._orientation, self._vel
 
     def __is_valid_update__(self, updates: Tuple[float, float, float]) -> bool:
         rotation, next_x, next_y = updates
