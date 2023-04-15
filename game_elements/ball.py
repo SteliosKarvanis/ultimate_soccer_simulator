@@ -5,37 +5,14 @@ from game_elements.field import LEFT_FRONT_GOAL_X, FIELD_LENGTH_Y, TOP_GOAL_Y
 from utils.configs import SAMPLE_TIME
 from game_elements.player import Player
 from math import radians, cos, sin, degrees, sqrt, acos, pi, tan
+from utils.utils import polar_to_cartesian_vector, cartesian_to_polar_vector, rotate_vector, translate_vector
+
 
 BALL_RADIUS = 12
 FRICTION = 4
 BALL_DIAMETER = 2 * BALL_RADIUS
 TOLERANCE = 10
 BALL_SIZE = (BALL_DIAMETER, BALL_DIAMETER)
-
-
-def rotate_pos(x0: float, y0: float, angle_rad: float) -> Tuple[float, float]:
-    x = x0 * cos(angle_rad) + y0 * sin(angle_rad)
-    y = -x0 * sin(angle_rad) + y0 * cos(angle_rad)
-    return x, y
-
-
-def cartesian_to_polar_vector(v_x: float, v_y: float) -> Tuple[float, float]:
-    v = sqrt(v_x**2 + v_y**2)
-    if v != 0:
-        theta_rad = acos(v_x / v)
-        if v_y < 0:
-            theta_rad = 2 * pi - theta_rad
-    else:
-        theta_rad = 0
-    return v, theta_rad
-
-
-def polar_to_cartesian_vector(v: float, angle_rad: float) -> Tuple[float, float]:
-    return v * cos(angle_rad), v * sin(angle_rad)
-
-
-def translate_pos(x0: float, y0: float, delta_x: float, delta_y: float) -> Tuple[float, float]:
-    return x0 + delta_x, y0 + delta_y
 
 
 def global_to_element_referential(params: Tuple, rf_params: Tuple) -> Tuple[float, float]:
@@ -50,12 +27,12 @@ def global_to_element_referential(params: Tuple, rf_params: Tuple) -> Tuple[floa
     v0_x, v0_y = polar_to_cartesian_vector(v0, theta0_rad)
 
     # Make relative positions (translation and rotation)
-    x0, y0 = translate_pos(x0, y0, -rf_x, -rf_y)
-    x, y = rotate_pos(x0, y0, rf_theta_rad)
+    x0, y0 = translate_vector(x0, y0, -rf_x, -rf_y)
+    x, y = rotate_vector(x0, y0, rf_theta_rad)
 
     # Make relative velocities (translation and rotation)
-    v0_x, v0_y = translate_pos(v0_x, v0_y, -v_rf_x, -v_rf_y)
-    v_x, v_y = rotate_pos(v0_x, v0_y, rf_theta_rad)
+    v0_x, v0_y = translate_vector(v0_x, v0_y, -v_rf_x, -v_rf_y)
+    v_x, v_y = rotate_vector(v0_x, v0_y, rf_theta_rad)
 
     v, theta_rad = cartesian_to_polar_vector(v_x, v_y)
     theta_deg = degrees(theta_rad)
@@ -75,12 +52,12 @@ def element_ref_to_global_ref(params: tuple, rf_params: tuple) -> tuple:
     v0_x, v0_y = polar_to_cartesian_vector(v0, theta0_rad)
 
     # Make relative positions (translation and rotation)
-    x, y = rotate_pos(x0, y0, -rf_theta_rad)
-    x, y = translate_pos(x, y, rf_x, rf_y)
+    x, y = rotate_vector(x0, y0, -rf_theta_rad)
+    x, y = translate_vector(x, y, rf_x, rf_y)
 
     # Make relative velocities (translation and rotation)
-    v_x, v_y = rotate_pos(v0_x, v0_y, -rf_theta_rad)
-    v_x, v_y = translate_pos(v_x, v_y, rf_v_x, rf_v_y)
+    v_x, v_y = rotate_vector(v0_x, v0_y, -rf_theta_rad)
+    v_x, v_y = translate_vector(v_x, v_y, rf_v_x, rf_v_y)
 
     v, theta_rad = cartesian_to_polar_vector(v_x, v_y)
     theta_deg = degrees(theta_rad)
