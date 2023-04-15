@@ -1,5 +1,5 @@
 from typing import Dict, Tuple
-from GUI.player import Player
+from game_elements.player import Player
 from pygame.math import Vector2
 from math import pi, sqrt
 from world_state import WorldState

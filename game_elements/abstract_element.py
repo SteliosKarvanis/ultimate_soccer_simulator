@@ -4,10 +4,10 @@ from pygame.math import Vector2
 from abc import abstractmethod
 import pygame
 from typing import List
-from GUI.field import *
+from game_elements.field import *
 
 
-class GameElement:
+class AbstractElement:
     def __init__(self) -> None:
         self._x = 0
         self._y = 0

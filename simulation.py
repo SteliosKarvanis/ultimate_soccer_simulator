@@ -1,15 +1,15 @@
 import pygame
 from pygame import Surface
 from typing import Tuple
-from GUI.player import Player
-from GUI.ball import Ball
-from GUI.scoreboard import ScoreBoard
+from game_elements.player import Player
+from game_elements.ball import Ball
+from game_elements.scoreboard import ScoreBoard
 from pygame.colordict import THECOLORS as colors
 from decision_making.manual_policy import ManualBehaviour
 from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
-from utils.types import GameElement
-from GUI.field import FIELD_POINTS
+from game_elements.abstract_element import AbstractElement
+from game_elements.field import FIELD_POINTS
 from world_state import WorldState
 from pygame.math import Vector2
 
@@ -65,7 +65,7 @@ class Simulation:
             screen = self.__draw_element__(screen, sprite)
         return screen
 
-    def __draw_element__(self, screen: Surface, element: GameElement) -> Surface:
+    def __draw_element__(self, screen: Surface, element: AbstractElement) -> Surface:
         sprite = pygame.transform.rotate(element.get_surface(), element.get_orientation())
         rect = sprite.get_rect()
         rect.center = self.field_to_pix_coord(element.get_pos())

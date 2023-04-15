@@ -1,9 +1,9 @@
 from typing import Tuple
 import pygame
-from utils.types import GameElement
-from GUI.field import LEFT_FRONT_GOAL_X, FIELD_LENGTH_Y, TOP_GOAL_Y
+from game_elements.abstract_element import AbstractElement
+from game_elements.field import LEFT_FRONT_GOAL_X, FIELD_LENGTH_Y, TOP_GOAL_Y
 from utils.configs import SAMPLE_TIME
-from GUI.player import Player
+from game_elements.player import Player
 from math import radians, cos, sin, degrees, sqrt, acos, pi, tan
 
 BALL_RADIUS = 12
@@ -87,7 +87,7 @@ def element_ref_to_global_ref(params: tuple, rf_params: tuple) -> tuple:
     return new_params
 
 
-class Ball(pygame.sprite.Sprite, GameElement):
+class Ball(pygame.sprite.Sprite, AbstractElement):
     def __init__(self, initial_pos: Tuple = (0, 0)):
         super().__init__()
         self._x, self._y = initial_pos

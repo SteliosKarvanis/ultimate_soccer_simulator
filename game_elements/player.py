@@ -1,6 +1,6 @@
 import pygame
 from pygame import Surface
-from utils.types import GameElement
+from game_elements.abstract_element import AbstractElement
 from typing import Tuple
 from pygame.colordict import THECOLORS as colors
 import math
@@ -17,7 +17,7 @@ PLAYER_SIDE = 40
 PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 
 
-class Player(pygame.sprite.Sprite, GameElement):
+class Player(pygame.sprite.Sprite, AbstractElement):
     def __init__(
         self,
         initial_pos: Tuple = (-300, 0),
