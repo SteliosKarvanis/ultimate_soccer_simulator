@@ -139,10 +139,11 @@ class Ball(AbstractElement):
             x_right = side_x / 2 + BALL_RADIUS
             x_left = -x_right
             # For each vertex, check it is above the line of movement of the ball, for example tr == True, check if the top right vertex is above the movement line of the ball
-            tr = (y_top - y + tan(orientation) * (x_right - x)) > 0
-            br = (y_bottom - y + tan(orientation) * (x_right - x)) > 0
-            tl = (y_top - y + tan(orientation) * (x_left - x)) > 0
-            bl = (y_bottom - y + tan(orientation) * (x_left - x)) > 0
+            inclination = tan(radians(orientation))
+            tr = (y_top - y + inclination * (x_right - x)) > 0
+            br = (y_bottom - y + inclination * (x_right - x)) > 0
+            tl = (y_top - y + inclination * (x_left - x)) > 0
+            bl = (y_bottom - y + inclination * (x_left - x)) > 0
             # right side colision
             if tr and not br and (orientation > 90 and orientation < 270):
                 x = BALL_RADIUS + side_x / 2 + TOLERANCE
