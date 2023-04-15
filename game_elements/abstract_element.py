@@ -23,6 +23,10 @@ class AbstractElement(
         self._orientation = orientation
         self.size = size
         self._surface = Surface(size)
+        # Save a copy of initial state
+        self.__initial_pos = initial_pos
+        self.__initial_vel = vel
+        self.__initial_orientation = orientation
 
     def get_pos(self) -> Vector2:
         return self._x, self._y
@@ -55,3 +59,8 @@ class AbstractElement(
 
     def get_surface(self) -> Surface:
         return self._surface
+
+    def reset_state(self):
+        self._vel = self.__initial_vel
+        self._orientation = self.__initial_orientation
+        self._x, self._y = self.__initial_pos

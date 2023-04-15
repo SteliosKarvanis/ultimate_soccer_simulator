@@ -10,6 +10,7 @@ from utils.utils import (
     cartesian_to_polar_vector,
     get_state_from_referential,
     get_state_in_referential,
+    translate_vector,
 )
 
 
@@ -28,30 +29,23 @@ class Ball(AbstractElement):
         self._surface = pygame.transform.scale(self._surface, (BALL_DIAMETER, BALL_DIAMETER))
 
     def update(self) -> str:
-        if self._vel > 0:
-            collision_side = self.get_bumper_state()
-            if collision_side == "up" or collision_side == "down":
-                self._orientation = (360 - self._orientation) % 360
-            elif collision_side == "right" or collision_side == "left":
-                self._orientation = (180 - self._orientation) % 360
-            self._x = self._x + cos(radians(self._orientation)) * self._vel * SAMPLE_TIME
-            self._y = self._y + sin(radians(self._orientation)) * self._vel * SAMPLE_TIME
-            self._vel = self._vel - FRICTION * SAMPLE_TIME
-        else:
-            self._vel = 0.0
+        collision_side = self.get_bumper_state()
+        if collision_side == "up" or collision_side == "down":
+            self._orientation = (360 - self._orientation) % 360
+        elif collision_side == "right" or collision_side == "left":
+            self._orientation = (180 - self._orientation) % 360
+        self._x, self._y = translate_vector(
+            self.get_pos(), polar_to_cartesian_vector(self._vel * SAMPLE_TIME, radians(self._orientation))
+        )
+        self.update_velocity()
         goal_state = self.get_goal_state()
         if goal_state != "None":
-            self._x = 0
-            self._y = 0
-            self._vel = 0
-            self._orientation = 0
+            self.reset_state()
         return goal_state
 
-    def __next_velocity(self) -> float:
-        if self._vel > 0:
-            return self._vel - FRICTION * SAMPLE_TIME
-        else:
-            return 0.0
+    def update_velocity(self) -> float:
+        new_vel = self._vel - FRICTION * SAMPLE_TIME
+        return max(new_vel, 0)
 
     def get_bumper_state(self) -> str:
         if self._y + BALL_RADIUS >= FIELD_LENGTH_Y / 2:
@@ -120,6 +114,7 @@ class Ball(AbstractElement):
                 y = -BALL_RADIUS - side_y / 2 - TOLERANCE
                 v, orientation_rad = cartesian_to_polar_vector(v_x, -v_y)
                 orientation = degrees(orientation_rad)
+        # TODO: check if has collision in spinning or only wit angular rotation
         # Back to the global referential
         if collided:
             self._x, self._y, self._orientation, self._vel = get_state_from_referential(
