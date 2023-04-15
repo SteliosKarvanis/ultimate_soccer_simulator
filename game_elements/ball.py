@@ -139,28 +139,29 @@ class Ball(AbstractElement):
             x_right = side_x / 2 + BALL_RADIUS
             x_left = -x_right
             # For each vertex, check it is above the line of movement of the ball, for example tr == True, check if the top right vertex is above the movement line of the ball
-            inclination = tan(radians(orientation))
-            tr = (y_top - y + inclination * (x_right - x)) > 0
-            br = (y_bottom - y + inclination * (x_right - x)) > 0
-            tl = (y_top - y + inclination * (x_left - x)) > 0
-            bl = (y_bottom - y + inclination * (x_left - x)) > 0
+            a = -sin(radians(orientation))
+            b = cos(radians(orientation))
+            tr = (a * (x_right - x) + b * (y_top - y)) > 0
+            br = (a * (x_right - x) + b * (y_bottom - y)) > 0
+            tl = (a * (x_left - x) + b * (y_top - y)) > 0
+            bl = (a * (x_left - x) + b * (y_bottom - y)) > 0
             # right side colision
-            if tr and not br and (orientation > 90 and orientation < 270):
+            if ((tr and not br) or (br and not tr)) and (orientation > 90 and orientation < 270):
                 x = BALL_RADIUS + side_x / 2 + TOLERANCE
                 v, orientation_rad = cartesian_to_polar_vector(-v_x, v_y)
                 orientation = degrees(orientation_rad)
             # left side colision
-            elif tl and not bl and (orientation < 90 or orientation > 270):
+            elif ((tl and not bl) or (bl and not tl)) and (orientation < 90 or orientation > 270):
                 x = -BALL_RADIUS - side_x / 2 - TOLERANCE
                 v, orientation_rad = cartesian_to_polar_vector(-v_x, v_y)
                 orientation = degrees(orientation_rad)
             # top side colision
-            if tr and not tl and orientation > 180:
+            if ((tr and not tl) or (tl and not tr)) and orientation > 180:
                 y = BALL_RADIUS + side_y / 2 + TOLERANCE
                 v, orientation_rad = cartesian_to_polar_vector(v_x, -v_y)
                 orientation = degrees(orientation_rad)
             # bottom side colision
-            elif bl and not br and orientation < 180:
+            elif ((bl and not br) or (br and not bl)) and orientation < 180:
                 y = -BALL_RADIUS - side_y / 2 - TOLERANCE
                 v, orientation_rad = cartesian_to_polar_vector(v_x, -v_y)
                 orientation = degrees(orientation_rad)
