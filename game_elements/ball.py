@@ -129,7 +129,7 @@ class Ball(AbstractElement):
         collided = False
         # Changing to the referential of the element
         x, y, orientation, v = get_state_in_referential(state=self.get_state(), referential_state=referential_state)
-        v_x, v_y = polar_to_cartesian_vector(v, orientation)
+        v_x, v_y = polar_to_cartesian_vector(v, radians(orientation))
         # Check if has collision
         if abs(x) < BALL_RADIUS + side_x / 2 and abs(y) < BALL_RADIUS + side_x / 2:
             collided = True
@@ -146,19 +146,23 @@ class Ball(AbstractElement):
             # right side colision
             if tr and not br and (orientation > 90 and orientation < 270):
                 x = BALL_RADIUS + side_x / 2 + TOLERANCE
-                v, orientation = cartesian_to_polar_vector(-abs(v_x), v_y)
+                v, orientation_rad = cartesian_to_polar_vector(-v_x, v_y)
+                orientation = degrees(orientation_rad)
             # left side colision
             elif tl and not bl and (orientation < 90 or orientation > 270):
                 x = -BALL_RADIUS - side_x / 2 - TOLERANCE
-                v, orientation = cartesian_to_polar_vector(-abs(v_x), v_y)
+                v, orientation_rad = cartesian_to_polar_vector(-v_x, v_y)
+                orientation = degrees(orientation_rad)
             # top side colision
             if tr and not tl and orientation > 180:
                 y = BALL_RADIUS + side_y / 2 + TOLERANCE
-                v, orientation = cartesian_to_polar_vector(v_x, -abs(v_y))
+                v, orientation_rad = cartesian_to_polar_vector(v_x, -v_y)
+                orientation = degrees(orientation_rad)
             # bottom side colision
             elif bl and not br and orientation < 180:
                 y = -BALL_RADIUS - side_y / 2 - TOLERANCE
-                v, orientation = cartesian_to_polar_vector(v_x, -abs(v_y))
+                v, orientation_rad = cartesian_to_polar_vector(v_x, -v_y)
+                orientation = degrees(orientation_rad)
         # Back to the global referential
         if collided:
             self._x, self._y, self._orientation, self._vel = get_state_from_referential(
