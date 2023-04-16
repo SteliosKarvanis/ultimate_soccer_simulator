@@ -97,22 +97,22 @@ class Ball(AbstractElement):
             # right side colision
             if ((tr and not br) or (br and not tr)) and (orientation > 90 and orientation < 270):
                 x = BALL_RADIUS + side_x / 2 + TOLERANCE
-                v, orientation_rad = cartesian_to_polar_vector(-v_x, v_y)
+                v, orientation_rad = cartesian_to_polar_vector(-0.5*v_x, v_y)
                 orientation = degrees(orientation_rad)
             # left side colision
             elif ((tl and not bl) or (bl and not tl)) and (orientation < 90 or orientation > 270):
                 x = -BALL_RADIUS - side_x / 2 - TOLERANCE
-                v, orientation_rad = cartesian_to_polar_vector(-v_x, v_y)
+                v, orientation_rad = cartesian_to_polar_vector(-0.5*v_x, v_y)
                 orientation = degrees(orientation_rad)
             # top side colision
             if ((tr and not tl) or (tl and not tr)) and orientation > 180:
                 y = BALL_RADIUS + side_y / 2 + TOLERANCE
-                v, orientation_rad = cartesian_to_polar_vector(v_x, -v_y)
+                v, orientation_rad = cartesian_to_polar_vector(v_x, -0.5*v_y)
                 orientation = degrees(orientation_rad)
             # bottom side colision
             elif ((bl and not br) or (br and not bl)) and orientation < 180:
                 y = -BALL_RADIUS - side_y / 2 - TOLERANCE
-                v, orientation_rad = cartesian_to_polar_vector(v_x, -v_y)
+                v, orientation_rad = cartesian_to_polar_vector(v_x, -0.5*v_y)
                 orientation = degrees(orientation_rad)
         # TODO: check if has collision in spinning or only wit angular rotation
         # Back to the global referential
