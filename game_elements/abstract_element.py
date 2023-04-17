@@ -18,7 +18,7 @@ class AbstractElement(
         self._vel = vel
         self._orientation = orientation
         self.size = size
-        self._surface = pygame.Surface(size)
+        self._surface = pygame.Surface((1, 1))
         # Save a copy of initial state
         self.__initial_pos = initial_pos
         self.__initial_vel = vel

@@ -64,7 +64,8 @@ class Simulation:
         return screen
 
     def __draw_element__(self, screen: Surface, element: AbstractElement) -> Surface:
-        sprite = pygame.transform.rotate(element.get_surface(), element.get_orientation())
+        surface = pygame.transform.scale(element.get_surface(), element.size)
+        sprite = pygame.transform.rotate(surface, element.get_orientation())
         rect = sprite.get_rect()
         rect.center = self.field_to_pix_coord(element.get_pos())
         screen.blit(source=sprite, dest=rect)
