@@ -1,6 +1,8 @@
 from typing import Tuple
+from math import radians
 import pygame
-from game_elements.field import TOP_FIELD_Y, LEFT_FRONT_GOAL_X
+from game_elements.field import FIELD_LENGTH_X, TOP_FIELD_Y, LEFT_FRONT_GOAL_X, TOP_GOAL_Y
+from utils.utils import rotate_vector
 
 
 class AbstractElement(
@@ -41,15 +43,26 @@ class AbstractElement(
 
     def __is_valid_update__(self, updates: Tuple[float, float, float, float]) -> bool:
         next_x, next_y, rotation, vel = updates
-        new_sprite = pygame.transform.rotate(self._surface, rotation)
-        rect = new_sprite.get_rect()
-        rect.center = next_x, next_y
-        if (
-            rect.top < -TOP_FIELD_Y
-            or rect.left < LEFT_FRONT_GOAL_X
-            or rect.right > -LEFT_FRONT_GOAL_X
-            or rect.bottom > TOP_FIELD_Y
-        ):
+        # Clamp angle between [0, 90[
+        while rotation >= 90:
+            rotation -= 90
+        # Get coordinates of a vertex relative to element
+        side_x, side_y = self.size
+        side_x, side_y = side_x / 2, side_y / 2
+        # Rotate the vertex to real position
+        _, top_y = rotate_vector((side_x, side_y), -radians(rotation))
+        top_x, _ = rotate_vector((side_x, side_y), -(radians(rotation - 90)))
+        if next_x - top_x < -FIELD_LENGTH_X / 2 or next_x + top_x > FIELD_LENGTH_X / 2:
+            return False
+        if next_x - top_x < LEFT_FRONT_GOAL_X and next_y + top_y > TOP_GOAL_Y:
+            return False
+        if next_x - top_x < LEFT_FRONT_GOAL_X and next_y - top_y < -TOP_GOAL_Y:
+            return False
+        if next_x + top_x > -LEFT_FRONT_GOAL_X and next_y + top_y > TOP_GOAL_Y:
+            return False
+        if next_x - top_x > -LEFT_FRONT_GOAL_X and next_y - top_y < -TOP_GOAL_Y:
+            return False
+        if next_y + top_y > TOP_FIELD_Y or next_y - top_y < -TOP_FIELD_Y:
             return False
         return True
 

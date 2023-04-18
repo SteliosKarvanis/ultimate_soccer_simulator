@@ -2,6 +2,7 @@ from typing import Tuple
 from math import radians, cos, sin
 import pygame
 from pygame.colordict import THECOLORS as colors
+from game_elements.field import LEFT_FRONT_GOAL_X
 from utils.agent_actions import Action
 from utils.configs import SAMPLE_TIME
 from game_elements.abstract_element import AbstractElement
@@ -9,17 +10,17 @@ from decision_making.abstract_policy import AbstractBehaviour
 from world_state import WorldState
 
 PLAYER_SPIN_COUNTDOWN = 200
-PLAYER_LINEAR_SPEED = 80
-PLAYER_ANGULAR_SPEED = 35
-PLAYER_SPIN_SPEED = 200
-PLAYER_SIDE = 40
+PLAYER_LINEAR_SPEED = 0.125
+PLAYER_ANGULAR_SPEED = 50
+PLAYER_SPIN_SPEED = 100
+PLAYER_SIDE = 0.075
 PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 
 
 class Player(AbstractElement):
     def __init__(
         self,
-        initial_pos: Tuple = (-300, 0),
+        initial_pos: Tuple = (LEFT_FRONT_GOAL_X / 2, 0),
         orientation: float = 0,
         color: pygame.color = colors.get("white"),
         behaviour: AbstractBehaviour = AbstractBehaviour(),

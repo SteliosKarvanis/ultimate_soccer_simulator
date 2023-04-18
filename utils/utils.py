@@ -2,6 +2,18 @@ from typing import Sequence, Tuple
 from math import pi, cos, sin, acos, sqrt, degrees, radians
 
 
+def reflect_vector_vertically(point: Tuple[float, float]):
+    return point[0], -point[1]
+
+
+def reflect_vector_horizontally(point: Tuple[float, float]):
+    return -point[0], point[1]
+
+
+def opposite_vector(point: Tuple[float, float]):
+    return -point[0], -point[1]
+
+
 def rotate_vector(vector: Sequence, angle_rad: float) -> Tuple[float, float]:
     x0 = vector[0]
     y0 = vector[1]

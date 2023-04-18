@@ -1,20 +1,20 @@
 from typing import Tuple
 import pygame
 from pygame import Surface
-from pygame.math import Vector2
 from pygame.colordict import THECOLORS as colors
 from GUI.scoreboard import ScoreBoard
 from game_elements.abstract_element import AbstractElement
-from game_elements.field import FIELD_POINTS
+from game_elements.field import FIELD_LENGTH_Y, FIELD_POINTS
 from game_elements.player import Player
 from game_elements.ball import Ball
 from decision_making.manual_policy import ManualBehaviour
 from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
+from utils.utils import reflect_vector_vertically, translate_vector
 from world_state import WorldState
 
-MARGIN = 40
-LINE_THICKNESS = 10
+MARGIN = 16
+LINE_THICKNESS = 5
 
 
 class Simulation:
@@ -64,26 +64,22 @@ class Simulation:
         return screen
 
     def __draw_element__(self, screen: Surface, element: AbstractElement) -> Surface:
-        surface = pygame.transform.scale(element.get_surface(), element.size)
+        surface = pygame.transform.scale(element.get_surface(), self.field_to_pix_scale(element.size))
         sprite = pygame.transform.rotate(surface, element.get_orientation())
         rect = sprite.get_rect()
         rect.center = self.field_to_pix_coord(element.get_pos())
         screen.blit(source=sprite, dest=rect)
         return screen
 
-    def pix_to_field_coord(self, point: Vector2) -> Vector2:
-        point[1] *= -1
-        return point - self.get_field_center()
-
-    def field_to_pix_coord(self, point: Vector2) -> Tuple[int, int]:
-        point = point + self.get_field_center()
-        point[1] *= -1
+    def field_to_pix_coord(self, point_field: Tuple[float, float]) -> Tuple[int, int]:
+        point = self.field_to_pix_scale(point_field)
+        point = reflect_vector_vertically(point)
+        point = translate_vector(point, self.get_field_center())
         return point
 
-    def get_field_center(self) -> Vector2:
-        center = self.surface.get_bounding_rect().center
-        # TODO: fix the math behind the line below
-        return Vector2(center[0], -center[1] - self.scoreboard.frame.get_height() / 2 - MARGIN)
+    def get_field_center(self) -> Tuple[float, float]:
+        center = pygame.display.get_surface().get_size()
+        return center[0] / 2, center[1] / 2 + self.scoreboard.frame.get_height() / 2
 
     def draw_field(self, screen: Surface) -> Surface:
         field_points = [self.field_to_pix_coord(x) for x in FIELD_POINTS]
@@ -91,3 +87,8 @@ class Simulation:
             surface=screen, color=pygame.Color("white"), closed=True, points=field_points, width=LINE_THICKNESS
         )
         return screen
+
+    def field_to_pix_scale(self, point):
+        field_y_pix = pygame.display.get_surface().get_height() - self.scoreboard.frame.get_height() - 2 * MARGIN
+        scale = field_y_pix / FIELD_LENGTH_Y
+        return point[0] * scale, point[1] * scale
