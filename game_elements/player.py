@@ -10,7 +10,7 @@ from decision_making.abstract_policy import AbstractBehaviour
 from world_state import WorldState
 
 PLAYER_SPIN_COUNTDOWN = 200
-PLAYER_LINEAR_SPEED = 0.125
+PLAYER_LINEAR_SPEED = 0.1
 PLAYER_ANGULAR_SPEED = 50
 PLAYER_SPIN_SPEED = 100
 PLAYER_SIDE = 0.075

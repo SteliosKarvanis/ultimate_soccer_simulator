@@ -10,7 +10,7 @@ from decision_making.FSM.states.follow_ball import FollowBall
 class FSM(AbstractBehaviour):
     def __init__(self) -> None:
         super().__init__()
-        self.state = FollowBall()
+        self.state = UnivectorNavigate()
 
     def get_action(self, world_state: WorldState) -> Action:
         self.state = self.state.next_state(world_state)

@@ -14,6 +14,10 @@ def opposite_vector(point: Tuple[float, float]):
     return -point[0], -point[1]
 
 
+def subtract_vector(v1: Tuple[float, float], v2: Tuple[float, float]) -> Tuple[float, float]:
+    return v1[0] - v2[0], v1[1] - v2[1]
+
+
 def rotate_vector(vector: Sequence, angle_rad: float) -> Tuple[float, float]:
     x0 = vector[0]
     y0 = vector[1]
@@ -31,6 +35,10 @@ def cartesian_to_polar_vector(x: float, y: float) -> Tuple[float, float]:
     else:
         theta_rad = 0
     return magnitude, theta_rad
+
+
+def get_magnitude_from_vector(x: float, y: float) -> float:
+    return sqrt(x**2 + y**2)
 
 
 def polar_to_cartesian_vector(magnitude: float, angle_rad: float) -> Tuple[float, float]:
