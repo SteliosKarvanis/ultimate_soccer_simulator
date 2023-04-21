@@ -60,7 +60,7 @@ class AbstractElement(
             return False
         if next_x + top_x > -LEFT_FRONT_GOAL_X and next_y + top_y > TOP_GOAL_Y:
             return False
-        if next_x - top_x > -LEFT_FRONT_GOAL_X and next_y - top_y < -TOP_GOAL_Y:
+        if next_x + top_x > -LEFT_FRONT_GOAL_X and next_y - top_y < -TOP_GOAL_Y:
             return False
         if next_y + top_y > TOP_FIELD_Y or next_y - top_y < -TOP_FIELD_Y:
             return False
