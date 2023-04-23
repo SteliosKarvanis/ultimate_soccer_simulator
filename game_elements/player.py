@@ -11,8 +11,8 @@ from decision_making.abstract_policy import AbstractBehaviour
 from world_state import WorldState
 
 PLAYER_SPIN_COUNTDOWN = 200
-PLAYER_LINEAR_SPEED = 0.1
-PLAYER_ANGULAR_SPEED = 50
+PLAYER_LINEAR_SPEED = 0.25
+PLAYER_ANGULAR_SPEED = 500*PLAYER_LINEAR_SPEED
 PLAYER_SPIN_SPEED = 100
 PLAYER_SIDE = 0.075
 PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
@@ -44,6 +44,7 @@ class Player(AbstractElement):
         self.rebound_count = 0
         self.last_moving_action = Action()
         self.last_valid_pose = self.get_state()
+        self.base_vel = PLAYER_LINEAR_SPEED
 
     def update(self, world_state: WorldState):
         restart_spin = False
@@ -72,7 +73,6 @@ class Player(AbstractElement):
                 if action.forward != 0:
                     self.last_moving_action = action
                 self.__update_state__(pose_updates)
-
             
 
     def __is_valid_update__(self, updates: Tuple[float, float, float, float]) -> bool:
@@ -85,6 +85,7 @@ class Player(AbstractElement):
         self.mask = pygame.mask.from_surface(self._sprite)
         self.rect = self._sprite.get_rect()
         self.rect.center = self.scale((self._x, self._y))
+
     def __next_pose__(self, action: Action) -> Tuple[float]:
         if action.spin:
             new_orientation = (self._orientation - PLAYER_SPIN_SPEED * SAMPLE_TIME) % 360
@@ -93,10 +94,10 @@ class Player(AbstractElement):
         else:
             new_orientation = (self._orientation - action.rotate * PLAYER_ANGULAR_SPEED * SAMPLE_TIME) % 360
             return (
-                self._x + cos(radians(self._orientation)) * PLAYER_LINEAR_SPEED * SAMPLE_TIME * action.forward,
-                self._y + sin(radians(self._orientation)) * PLAYER_LINEAR_SPEED * SAMPLE_TIME * action.forward,
+                self._x + cos(radians(self._orientation)) * self._vel * SAMPLE_TIME,
+                self._y + sin(radians(self._orientation)) * self._vel * SAMPLE_TIME,
                 new_orientation,
-                PLAYER_LINEAR_SPEED * action.forward,
+                self.base_vel * action.forward,
             )
 
     def check_collision(self) -> bool:

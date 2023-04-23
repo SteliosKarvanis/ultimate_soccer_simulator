@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Tuple
 
-FPS = 60
+FPS = 120
 SAMPLE_TIME = 1 / FPS
 INITIAL_SCREEN_WIDTH = 1200
 INITIAL_SCREEN_HEIGHT = 900

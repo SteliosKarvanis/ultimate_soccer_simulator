@@ -4,7 +4,7 @@ from pygame import Surface
 from pygame.colordict import THECOLORS as colors
 from GUI.scoreboard import ScoreBoard
 from game_elements.abstract_element import AbstractElement
-from game_elements.field import FIELD_LENGTH_Y, FIELD_POINTS
+from game_elements.field import FIELD_LENGTH_Y, FIELD_POINTS, LEFT_FRONT_GOAL_X
 from game_elements.player import Player
 from game_elements.ball import Ball
 from decision_making.manual_policy import ManualBehaviour
@@ -12,11 +12,10 @@ from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
 from utils.utils import reflect_vector_vertically, translate_vector
 from world_state import WorldState
-from game_elements.field import LEFT_FRONT_GOAL_X
+from game_elements.item import *
 
 MARGIN = 16
 LINE_THICKNESS = 5
-
 
 class Simulation:
     def __init__(self, config: Configuration, surface: Surface) -> None:
@@ -40,22 +39,30 @@ class Simulation:
         )
         self.ball = Ball()
         self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
-        
+        self.active_items = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
-        self.clock.tick(self.FPS)
-
+        self.clock.tick()
     def update(self):
-        self.ally.update(self.get_state())
-        self.opponent.update(self.get_state())
         if not self.ball.collision_management(self.ally):
             l = self.ball.collision_management(self.opponent)
         goal_state = self.ball.update()
         if goal_state != "None":
             self.scoreboard.update(character=goal_state, frame_height=self.configs.scoreboard_height)
+        if self.scoreboard.thirty_sec_mark:
+            print("item")
+            self.active_items.add(Accelerate((0,FIELD_LENGTH_Y/4), self.clock.get_time(), self.field_to_pix_scale((ITEM_SIZE, ITEM_SIZE))[0]/ITEM_SIZE))
+        for item in self.active_items:
+            assert isinstance(item, Item)
+            player = item.update(self.clock.get_time(), self.players)
+            if player != None:
+                item.effect.transform(player)
+        self.ally.update(self.get_state())
+        self.opponent.update(self.get_state())
 
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
-        screen = self.__draw_elements__(screen, self.game_elements)
+        screen = self.__draw_elements__(screen)
+        screen = self.__draw_items__(screen)
         screen = self.scoreboard.draw(screen, self.clock.tick())
         return screen
 
@@ -66,8 +73,8 @@ class Simulation:
             ball_state=self.ball.get_state(),
         )
 
-    def __draw_elements__(self, screen: Surface, group: pygame.sprite.Group) -> Surface:
-        for sprite in group.sprites():
+    def __draw_elements__(self, screen: Surface) -> Surface:
+        for sprite in self.game_elements.sprites():
             screen = self.__draw_element__(screen, sprite)
         return screen
 
@@ -78,10 +85,17 @@ class Simulation:
         rect.center = self.field_to_pix_coord(element.get_pos())
         screen.blit(source=sprite, dest=rect)
         return screen
+    
+    def __draw_items__(self, screen: Surface)-> Surface:
+        for item in self.active_items:
+            if item.lifetime > 0:
+                screen.blit(source=item.image, dest=item.image.get_rect(center=self.field_to_pix_coord(item.pos, scale=False)))
+        return screen
 
-    def field_to_pix_coord(self, point_field: Tuple[float, float]) -> Tuple[int, int]:
-        point = self.field_to_pix_scale(point_field)
-        point = reflect_vector_vertically(point)
+    def field_to_pix_coord(self, point_field: Tuple[float, float], scale = True) -> Tuple[int, int]:
+        if scale:
+            point_field = self.field_to_pix_scale(point_field)
+        point = reflect_vector_vertically(point_field)
         point = translate_vector(point, self.get_field_center())
         return point
 

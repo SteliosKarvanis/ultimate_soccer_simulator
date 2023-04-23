@@ -29,7 +29,6 @@ class App:
     def on_loop(self):
         if self._running:
             self.simulation.update()
-        pass
 
     def on_render(self):
         # Draw background
