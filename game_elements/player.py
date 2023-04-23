@@ -43,7 +43,7 @@ class Player(AbstractElement):
         self.rebound_action = Action()
         self.rebound_count = 0
         self.last_moving_action = Action()
-        self.invalid_timer = 20
+        self.last_valid_pose = self.get_state()
 
     def update(self, world_state: WorldState):
         restart_spin = False
@@ -56,36 +56,35 @@ class Player(AbstractElement):
         self.__update_spin_count__(restart_spin)
 
         if self.rebound_count > 0:
-            self._x, self._y, self._orientation, self._vel = self.__next_pose__(self.rebound_action)
-            self._sprite = pygame.transform.scale(self._surface, self.scale(self.size))
-            self._sprite = pygame.transform.rotate(self._sprite, self._orientation)
-            self.mask = pygame.mask.from_surface(self._sprite)
-            self.rect = self._sprite.get_rect()
-            self.rect.center = self.scale((self._x, self._y))
+            self.__update_state__(self.__next_pose__(self.rebound_action))
             self.rebound_count -= 1
         else:
             pose_updates = self.__next_pose__(action)
             if not self.__is_valid_update__(pose_updates):
+                self.__update_state__(self.last_valid_pose)
                 if action.forward != 0:
                     self.last_moving_action = action
                 self.rebound_action = Action(-self.last_moving_action.rotate, -self.last_moving_action.forward, 0)
-                self.rebound_count = 20
+                self.rebound_count = 40
+
             else:
+                self.last_valid_pose = pose_updates
                 if action.forward != 0:
                     self.last_moving_action = action
-                self._x, self._y, self._orientation, self._vel = pose_updates
-                self._sprite = pygame.transform.scale(self._surface, self.scale(self.size))
-                self._sprite = pygame.transform.rotate(self._sprite, self._orientation)
-                self.mask = pygame.mask.from_surface(self._sprite)
-                self.rect = self._sprite.get_rect()
-                self.rect.center = self.scale((self._x, self._y))
+                self.__update_state__(pose_updates)
 
             
 
     def __is_valid_update__(self, updates: Tuple[float, float, float, float]) -> bool:
-        
         return super().__is_valid_update__(updates) and self.check_collision()
-
+    
+    def __update_state__(self, updates):
+        self._x, self._y, self._orientation, self._vel = updates
+        self._sprite = pygame.transform.scale(self._surface, self.scale(self.size))
+        self._sprite = pygame.transform.rotate(self._sprite, self._orientation)
+        self.mask = pygame.mask.from_surface(self._sprite)
+        self.rect = self._sprite.get_rect()
+        self.rect.center = self.scale((self._x, self._y))
     def __next_pose__(self, action: Action) -> Tuple[float]:
         if action.spin:
             new_orientation = (self._orientation - PLAYER_SPIN_SPEED * SAMPLE_TIME) % 360
