@@ -16,8 +16,6 @@ class App:
         self.simulation = Simulation(self.menu.configs, self.lawn)
         self.button = Button()
 
-    def draw_field(self):
-        pass
 
     def on_init(self):
         pygame.init()

@@ -13,7 +13,7 @@ class AbstractElement(
         initial_pos: Tuple[float, float] = (0, 0),
         orientation: float = 0,
         vel: float = 0,
-        size: Tuple[float, float] = (0, 0),
+        size: Tuple[float, float] = (0, 0)
     ) -> None:
         super().__init__()
         self._x, self._y = initial_pos

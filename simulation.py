@@ -12,6 +12,7 @@ from decision_making.FSM.fsm_policy import FSM
 from utils.configs import Configuration, SimulConfig
 from utils.utils import reflect_vector_vertically, translate_vector
 from world_state import WorldState
+from game_elements.field import LEFT_FRONT_GOAL_X
 
 MARGIN = 16
 LINE_THICKNESS = 5
@@ -21,18 +22,25 @@ class Simulation:
     def __init__(self, config: Configuration, surface: Surface) -> None:
         self.configs = SimulConfig.generate_from_config(config)
         self.surface = surface
+        self.players = pygame.sprite.Group()
+        self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
         self.FPS = self.configs.FPS
         self.ally = Player(
+            self.players,
+            lambda x: self.field_to_pix_scale_generic(x, self.configs.screen_res[1], self.scoreboard.frame.get_height()),
             color=colors.get("darkblue"),
             behaviour=ManualBehaviour(),
         )
         self.opponent = Player(
+            self.players,
+            lambda x: self.field_to_pix_scale_generic(x, self.configs.screen_res[1], self.scoreboard.frame.get_height()),
+            initial_pos=(-LEFT_FRONT_GOAL_X / 2, 0),
             color=colors.get("darkred"),
             behaviour=FSM(),
         )
         self.ball = Ball()
         self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
-        self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
+        
         self.clock = pygame.time.Clock()
         self.clock.tick(self.FPS)
 
@@ -87,8 +95,10 @@ class Simulation:
             surface=screen, color=pygame.Color("white"), closed=True, points=field_points, width=LINE_THICKNESS
         )
         return screen
-
-    def field_to_pix_scale(self, point):
-        field_y_pix = pygame.display.get_surface().get_height() - self.scoreboard.frame.get_height() - 2 * MARGIN
+    def field_to_pix_scale_generic(self, point, height, offset):
+        field_y_pix = height - offset - 2 * MARGIN
         scale = field_y_pix / FIELD_LENGTH_Y
         return point[0] * scale, point[1] * scale
+    
+    def field_to_pix_scale(self, point):
+        return self.field_to_pix_scale_generic(point, pygame.display.get_surface().get_height(), self.scoreboard.frame.get_height())
