@@ -10,10 +10,10 @@ from decision_making.abstract_policy import AbstractBehaviour
 from world_state import WorldState
 from utils.collision_handler import CollisionHandler
 
-PLAYER_SPIN_COUNTDOWN = 200
+PLAYER_SPIN_COUNTDOWN = 5
 PLAYER_LINEAR_SPEED = 0.25
 PLAYER_ANGULAR_SPEED = 500*PLAYER_LINEAR_SPEED
-PLAYER_SPIN_SPEED = 100
+PLAYER_SPIN_SPEED = 1000
 PLAYER_SIDE = 0.075
 PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 
