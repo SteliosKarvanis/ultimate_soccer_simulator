@@ -25,7 +25,8 @@ class Item (Sprite):
         self.state = ItemState.WAITING
         self.effect = None
         self.current_user = None
-        self.time = birth_time
+        self.existence_time = birth_time
+        self.use_time = None
 
     # should define a lifetime in miliseconds for each concrete item
     def __set_lifetime__(self):
@@ -48,7 +49,8 @@ class Item (Sprite):
     def update(self, time: int, players: Group) -> Player|None:
         match self.state:
             case ItemState.IN_USE:
-                self.effect_duration -= (time - self.time)
+                self.effect_duration -= (time - self.use_time)
+                self.use_time = time
                 if self.effect_duration <= 0:
                     for group in self.groups():
                         group.remove(self)
@@ -56,7 +58,8 @@ class Item (Sprite):
                 return None
                 
             case ItemState.WAITING:
-                self.lifetime -= (time - self.time)
+                self.lifetime -= (time - self.existence_time)
+                self.existence_time = time
                 player = self.check_collision(players)
                 if self.lifetime <= 0:
                     for group in self.groups():
@@ -66,6 +69,7 @@ class Item (Sprite):
                     self.state = ItemState.IN_USE
                     self.current_user = player
                     self.__create_effect__(player)
+                    self.use_time = time
                 return player
 
     def check_collision(self, players: Group)-> Player|None:
@@ -80,7 +84,7 @@ class Item (Sprite):
 
 class Accelerator(Item):
     def __set_lifetime__(self):
-        self.lifetime = 1e4
+        self.lifetime = 10e3
 
     def __set_duration__(self):
         self.effect_duration = 3e3

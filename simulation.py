@@ -24,7 +24,7 @@ class Simulation:
         self.configs = SimulConfig.generate_from_config(config)
         self.surface = surface
         self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
-        self.FPS = self.configs.FPS
+        self.FPS = 240
         self.collision_handler = CollisionHandler(self.generate_scaling_function())
         self.ally = Player(
             "resources/player.png",
@@ -33,7 +33,6 @@ class Simulation:
         self.opponent = Player(
             "resources/opponent.png",
             initial_pos=(-LEFT_FRONT_GOAL_X / 2, 0),
-            behaviour=FSM(),
         )
         self.players = pygame.sprite.Group(self.ally, self.opponent)
         self.__initialize_player_sprites__()
@@ -54,7 +53,7 @@ class Simulation:
 
         for item in self.active_items:
             assert isinstance(item, Item)
-            player = item.update(self.clock.get_time(), self.players)
+            player = item.update(pygame.time.get_ticks(), self.players)
             if player != None:
                 item.effect.transform(player)
         self.ally.update(self.get_state(), self.collision_handler)
@@ -63,8 +62,8 @@ class Simulation:
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
         screen = self.__draw_elements__(screen)
+        screen = self.scoreboard.draw(screen, pygame.time.get_ticks())
         screen = self.__draw_items__(screen)
-        screen = self.scoreboard.draw(screen, self.clock.tick())
         return screen
 
     def get_state(self) -> WorldState:
@@ -78,7 +77,7 @@ class Simulation:
         pos = (random.uniform(-FIELD_LENGTH_X/4,FIELD_LENGTH_X/4), random.uniform(-FIELD_LENGTH_Y/4, FIELD_LENGTH_Y/4))
         new_item_type = random.sample(item_type_list, 1)
         new_item_type = new_item_type[0]
-        new_item = new_item_type(pos, self.clock.get_time())
+        new_item = new_item_type(pos, pygame.time.get_ticks())
         self.initialize_item(new_item)
         self.active_items.add(new_item)
         
@@ -88,9 +87,7 @@ class Simulation:
         item.image = pygame.transform.scale(item.image, item.size)
         item.mask = pygame.mask.from_surface(item.image)
         item.rect = item.image.get_rect(center=item.pos)
-        print(item.pos)
         
-
     def __draw_elements__(self, screen: Surface) -> Surface:
         for sprite in self.game_elements.sprites():
             screen = self.__draw_element__(screen, sprite)

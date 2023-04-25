@@ -16,7 +16,6 @@ class App:
         self.simulation = Simulation(self.menu.configs, self.lawn)
         self.button = Button()
 
-
     def on_init(self):
         pygame.init()
         self._screen = pygame.display.set_mode(self.menu.get_config("screen_res"))
