@@ -32,12 +32,9 @@ class Simulation:
         )
         self.opponent = Player(
             "resources/opponent.png",
-            initial_pos=(-LEFT_FRONT_GOAL_X / 3, 0),
-            orientation=180,
             behaviour=FSM()
         )
         self.players = pygame.sprite.Group(self.ally, self.opponent)
-        self.__initialize_player_sprites__()
         self.ball = Ball()
         self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
         self.active_items = pygame.sprite.Group()
@@ -48,13 +45,13 @@ class Simulation:
     def start(self):
         self.running = True
         self.clock.tick()
+        self.ally.set_pose(self.collision_handler)
+        self.opponent.set_pose(self.collision_handler, pose = (-LEFT_FRONT_GOAL_X / 3, 0, 180))
     
     def pause(self):
-        self.running = False
         self.paused = True
 
     def play(self):
-        self.running = True
         self.paused = False
 
     def is_running(self) -> bool:
@@ -83,7 +80,8 @@ class Simulation:
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
         screen = self.__draw_elements__(screen)
-        screen = self.scoreboard.draw(screen, 0 if self.paused else self.clock.tick())
+        time_passed = self.clock.tick()
+        screen = self.scoreboard.draw(screen, 0 if self.paused else time_passed)
         screen = self.__draw_items__(screen)
         return screen
 
@@ -145,9 +143,6 @@ class Simulation:
             surface=screen, color=pygame.Color("white"), closed=True, points=field_points, width=LINE_THICKNESS
         )
         return screen
-    def __initialize_player_sprites__(self):
-        self.collision_handler.update_element_sprite(self.ally)
-        self.collision_handler.update_element_sprite(self.opponent)
 
     def generate_scaling_function(self):
         return lambda x: self.field_to_pix_scale_generic(x, self.configs.screen_res[1], self.scoreboard.frame.get_height())
