@@ -1,11 +1,20 @@
 import pygame
 from pygame.sprite import Sprite, Group
+from pygame.math import Vector2
 from game_elements.player import Player
 from enum import Enum
 from game_elements.effects import *
+from pygame.colordict import THECOLORS as colors
 
 ITEM_SIZE = (0.055, 0.055)
 
+class Message:
+    def __init__(self, sprite: pygame.Surface, pos: Vector2) -> None:
+        self.msg = sprite
+        self.pos = pos
+        self.lifetime = 1e3
+        self.birth_time = 0
+    
 class ItemState(Enum):
     WAITING = 0,
     IN_USE = 1
@@ -13,6 +22,10 @@ class ItemState(Enum):
 class Item (Sprite):
     def __init__(self, pos, birth_time) -> None:
         super().__init__()
+        self.name = ""
+        self.font = pygame.font.SysFont('Times New Roman', 35, bold=True)
+        self.text_color = colors.get("white")
+        self.msg = self.font.render(self.name, True, self.text_color)
         self.image = pygame.image.load("resources/item.png").convert_alpha()
         self.mask = pygame.mask.from_surface(self.image)
         self.size = ITEM_SIZE
@@ -72,17 +85,25 @@ class Item (Sprite):
                     self.use_time = time
                 return player
 
-    def check_collision(self, players: Group)-> Player|None:
+    def check_collision(self, players: Group) -> Player|None:
         players = pygame.sprite.spritecollide(self, players, False, collided=Item.collided)
         return players[0] if len(players) != 0 else None
-   
+        
+    def create_message(self, player: Player) -> Message:
+        return Message(self.msg, player.get_pos())
+    
     @staticmethod
-    def collided(item: Sprite, player: Player)->bool:
+    def collided(item: Sprite, player: Player) -> bool:
         collision_point = pygame.sprite.collide_mask(item, player)
         return collision_point != None
 
 
 class Accelerator(Item):
+    def __init__(self, pos, birth_time) -> None:
+        super().__init__(pos, birth_time)
+        self.name = "Speed!"
+        self.msg = self.font.render(self.name, False, self.text_color)
+
     def __set_lifetime__(self):
         self.lifetime = 10e3
 
@@ -93,11 +114,17 @@ class Accelerator(Item):
         self.effect = IncreaseSpeed(player)
 
 class Mushroom(Item):
+    def __init__(self, pos, birth_time) -> None:
+        super().__init__(pos, birth_time)
+        self.name = "Grow!"
+        self.text_color = colors.get("orange")
+        self.msg = self.font.render(self.name, False, self.text_color)
+
     def __set_lifetime__(self):
         self.lifetime = 10e3
 
     def __set_duration__(self):
-        self.effect_duration = 3e3
+        self.effect_duration = 4e3
     
     def __create_effect__(self, player: Player):
         self.effect = IncreaseSize(player)

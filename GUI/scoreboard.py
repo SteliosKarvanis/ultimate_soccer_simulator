@@ -18,7 +18,7 @@ class ScoreBoard:
         self.time = 0  # tracks time in ms
         # keeps the appropriate representation for the scoreboard
         self.clock, self.clock_digits = self.__create_clock__()
-        self.half_minute_mark = False
+        self.half_minute_mark = True
 
     def get_score(self):
         return self.score

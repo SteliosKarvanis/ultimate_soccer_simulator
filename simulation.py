@@ -1,7 +1,6 @@
 from typing import Tuple
 import pygame
 from pygame import Surface
-from pygame.colordict import THECOLORS as colors
 from GUI.scoreboard import ScoreBoard
 from game_elements.abstract_element import AbstractElement
 from game_elements.field import FIELD_LENGTH_Y, FIELD_LENGTH_X, FIELD_POINTS, LEFT_FRONT_GOAL_X
@@ -41,6 +40,7 @@ class Simulation:
         self.clock = pygame.time.Clock()
         self.running = False
         self.paused = False
+        self.item_messages = []
 
     def start(self):
         self.running = True
@@ -73,13 +73,17 @@ class Simulation:
             assert isinstance(item, Item)
             player = item.update(pygame.time.get_ticks(), self.players)
             if player != None:
+                self.item_messages.append((item.create_message(player)))
+                self.item_messages[-1].birth_time = pygame.time.get_ticks()
                 item.effect.transform(player)
+
         self.ally.update(self.get_state(), self.collision_handler)
         self.opponent.update(self.get_state(), self.collision_handler)
 
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
         screen = self.__draw_elements__(screen)
+        screen = self.__draw_item_msgs__(screen)
         time_passed = self.clock.tick()
         screen = self.scoreboard.draw(screen, 0 if self.paused else time_passed)
         screen = self.__draw_items__(screen)
@@ -107,6 +111,13 @@ class Simulation:
         item.mask = pygame.mask.from_surface(item.image)
         item.rect = item.image.get_rect(center=item.pos)
         
+    def __draw_item_msgs__(self, screen: Surface) -> Surface:
+        for msg in self.item_messages:
+            screen.blit(msg.msg, self.field_to_pix_coord(msg.pos))
+            if pygame.time.get_ticks() - msg.birth_time >= msg.lifetime:
+                self.item_messages.pop(0)
+        return screen
+    
     def __draw_elements__(self, screen: Surface) -> Surface:
         for sprite in self.game_elements.sprites():
             screen = self.__draw_element__(screen, sprite)
