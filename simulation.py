@@ -13,6 +13,7 @@ from utils.configs import Configuration, SimulConfig
 from utils.utils import reflect_vector_vertically, translate_vector
 from world_state import WorldState
 from game_elements.item import *
+from utils.collision_handler import CollisionHandler
 
 MARGIN = 16
 LINE_THICKNESS = 5
@@ -24,24 +25,25 @@ class Simulation:
         self.players = pygame.sprite.Group()
         self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
         self.FPS = self.configs.FPS
+        self.collision_handler = CollisionHandler(self.generate_scaling_function())
         self.ally = Player(
             self.players,
-            lambda x: self.field_to_pix_scale_generic(x, self.configs.screen_res[1], self.scoreboard.frame.get_height()),
             color=colors.get("darkblue"),
             behaviour=ManualBehaviour(),
         )
         self.opponent = Player(
             self.players,
-            lambda x: self.field_to_pix_scale_generic(x, self.configs.screen_res[1], self.scoreboard.frame.get_height()),
             initial_pos=(-LEFT_FRONT_GOAL_X / 2, 0),
             color=colors.get("darkred"),
             behaviour=FSM(),
         )
+        self.__initialize_player_sprites__()
         self.ball = Ball()
         self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
         self.active_items = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
         self.clock.tick()
+
     def update(self):
         if not self.ball.collision_management(self.ally):
             l = self.ball.collision_management(self.opponent)
@@ -56,8 +58,8 @@ class Simulation:
             player = item.update(self.clock.get_time(), self.players)
             if player != None:
                 item.effect.transform(player)
-        self.ally.update(self.get_state())
-        self.opponent.update(self.get_state())
+        self.ally.update(self.get_state(), self.collision_handler)
+        self.opponent.update(self.get_state(), self.collision_handler)
 
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
@@ -109,6 +111,12 @@ class Simulation:
             surface=screen, color=pygame.Color("white"), closed=True, points=field_points, width=LINE_THICKNESS
         )
         return screen
+    def __initialize_player_sprites__(self):
+        self.collision_handler.update_element_sprite(self.ally)
+        self.collision_handler.update_element_sprite(self.opponent)
+    def generate_scaling_function(self):
+        return lambda x: self.field_to_pix_scale_generic(x, self.configs.screen_res[1], self.scoreboard.frame.get_height())
+    
     def field_to_pix_scale_generic(self, point, height, offset):
         field_y_pix = height - offset - 2 * MARGIN
         scale = field_y_pix / FIELD_LENGTH_Y
