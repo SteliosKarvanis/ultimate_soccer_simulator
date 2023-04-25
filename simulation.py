@@ -28,13 +28,13 @@ class Simulation:
         self.collision_handler = CollisionHandler(self.generate_scaling_function())
         self.ally = Player(
             self.players,
-            color=colors.get("darkblue"),
+            "resources/player.png",
             behaviour=ManualBehaviour(),
         )
         self.opponent = Player(
             self.players,
+            "resources/opponent.png",
             initial_pos=(-LEFT_FRONT_GOAL_X / 2, 0),
-            color=colors.get("darkred"),
             behaviour=FSM(),
         )
         self.__initialize_player_sprites__()

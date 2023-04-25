@@ -1,8 +1,7 @@
-from typing import Tuple, List
+from typing import Tuple
 from math import radians, cos, sin
 import pygame
-from pygame.sprite import Sprite, Group
-from pygame.colordict import THECOLORS as colors
+from pygame.sprite import Group
 from game_elements.field import LEFT_FRONT_GOAL_X
 from utils.agent_actions import Action
 from utils.configs import SAMPLE_TIME
@@ -23,15 +22,14 @@ class Player(AbstractElement):
     def __init__(
         self,
         group: Group,
+        asset_path: str,
         initial_pos: Tuple = (LEFT_FRONT_GOAL_X / 2, 0),
         orientation: float = 0,
-        color: pygame.color = colors.get("white"),
         behaviour: AbstractBehaviour = AbstractBehaviour(),
     ):
         super().__init__(initial_pos=initial_pos, orientation=orientation, vel=0, size=PLAYER_SIZE)
         self.add(group)
-        self._surface.set_colorkey(colors.get("black"))
-        self._surface.fill(color)
+        self._surface = pygame.image.load(asset_path)
         self.behaviour = behaviour
         self.spin_count = 0
         self.rebound_action = Action()
