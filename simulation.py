@@ -43,12 +43,25 @@ class Simulation:
         self.active_items = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
         self.running = False
+        self.paused = False
+
     def start(self):
         self.running = True
         self.clock.tick()
     
+    def pause(self):
+        self.running = False
+        self.paused = True
+
+    def play(self):
+        self.running = True
+        self.paused = False
+
     def is_running(self) -> bool:
         return self.running
+    
+    def is_paused(self) -> bool:
+        return self.paused
     
     def update(self):
         if not self.ball.collision_management(self.ally):
@@ -70,7 +83,7 @@ class Simulation:
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
         screen = self.__draw_elements__(screen)
-        screen = self.scoreboard.draw(screen, self.clock.tick())
+        screen = self.scoreboard.draw(screen, 0 if self.paused else self.clock.tick())
         screen = self.__draw_items__(screen)
         return screen
 
