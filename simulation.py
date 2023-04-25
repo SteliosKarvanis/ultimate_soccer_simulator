@@ -24,7 +24,7 @@ class Simulation:
         self.configs = SimulConfig.generate_from_config(config)
         self.surface = surface
         self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
-        self.FPS = 240
+        self.FPS = self.configs.FPS
         self.collision_handler = CollisionHandler(self.generate_scaling_function())
         self.ally = Player(
             "resources/player.png",
@@ -33,6 +33,7 @@ class Simulation:
         self.opponent = Player(
             "resources/opponent.png",
             initial_pos=(-LEFT_FRONT_GOAL_X / 2, 0),
+            behaviour=FSM()
         )
         self.players = pygame.sprite.Group(self.ally, self.opponent)
         self.__initialize_player_sprites__()
