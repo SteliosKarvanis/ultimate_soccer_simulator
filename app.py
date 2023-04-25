@@ -20,7 +20,7 @@ class App:
 
     def on_init(self):
         pygame.init()
-        self.text_font1=pygame.font.SysFont(None, 70)
+        self.text_font1=pygame.font.SysFont(None, 80)
         self.text_font2=pygame.font.SysFont(None, 50)
         self.start_menu=Start_Menu()
         self._screen = pygame.display.set_mode(self.menu.get_config("screen_res"))
@@ -50,15 +50,15 @@ class App:
                 self._screen.blit(self.lawn, (0, self.menu.get_config("status_bar_height")))
                 self._screen = self.simulation.draw(self._screen)
             else:
-                self._screen = self.start_menu.screen
+                self._screen.blit(pygame.transform.scale(self.lawn, self._screen.get_size()), (0, 0))
                 text1=self.text_font1.render(self.start_menu.text1,True,self.start_menu.text_color)
                 text2=self.text_font2.render(self.start_menu.text2,True,self.start_menu.text_color)
                 text3=self.text_font2.render(self.start_menu.text3,True,self.start_menu.text_color)
                 text4=self.text_font2.render(self.start_menu.text4,True,self.start_menu.text_color)
-                self._screen.blit(text1,(0,self.start_menu.height/4))
-                self._screen.blit(text3,(0,self.start_menu.height/2))
-                self._screen.blit(text4,(0,self.start_menu.height/2+50))
-                self._screen.blit(text2,(0,self.start_menu.height*2/3))
+                self._screen.blit(text1,(self._screen.get_width()/20,self._screen.get_height()/4))
+                self._screen.blit(text3,(self._screen.get_width()/10,self._screen.get_height()/2))
+                self._screen.blit(text4,(self._screen.get_width()/10,self._screen.get_height()/2+50))
+                self._screen.blit(text2,(self._screen.get_width()/10,self._screen.get_height()*2/3))
         else:
             pass
         # Update the display
