@@ -39,14 +39,22 @@ class Simulation:
         self.active_items = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
         self.running = False
-        self.paused = False
+        self.paused = True
         self.item_messages = []
 
     def start(self):
+        if self.running:
+            for item in self.active_items:
+                item.effect_duration = 0
+                item.lifetime = 0
         self.running = True
+        self.paused = False
         self.clock.tick()
+        self.ball.reset_state()
         self.ally.set_pose(self.collision_handler)
         self.opponent.set_pose(self.collision_handler, pose = (-LEFT_FRONT_GOAL_X / 3, 0, 180))
+        self.scoreboard.restart()
+        self.item_messages.clear()
     
     def pause(self):
         self.paused = True

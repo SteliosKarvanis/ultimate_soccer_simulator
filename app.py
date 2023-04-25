@@ -31,13 +31,20 @@ class App:
             return
 
         if self.simulation.is_running() and event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:
-                if self.simulation.is_paused():
-                    self.simulation.play()
-                else:
-                    self.simulation.pause()
+            match event.key:
+                case pygame.K_p:
+                    if self.simulation.is_paused():
+                        self.simulation.play()
+                    else:
+                        self.simulation.pause()
+                
+                case pygame.K_r:
+                    self.simulation.start()
+                
+                case pygame.K_BACKSPACE:
+                    self.simulation.running = False
 
-        if event.type == pygame.KEYDOWN and not self.simulation.is_running():
+        if event.type == pygame.KEYDOWN and not self.simulation.is_running() and event.key != pygame.K_BACKSPACE:
             self.simulation.start()
 
     def on_loop(self):

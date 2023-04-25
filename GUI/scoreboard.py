@@ -18,7 +18,7 @@ class ScoreBoard:
         self.time = 0  # tracks time in ms
         # keeps the appropriate representation for the scoreboard
         self.clock, self.clock_digits = self.__create_clock__()
-        self.half_minute_mark = True
+        self.half_minute_mark = False
 
     def get_score(self):
         return self.score
@@ -29,6 +29,13 @@ class ScoreBoard:
     def half_minute_passed(self):
         return self.half_minute_mark
     
+    def restart(self):
+        self.half_minute_mark = False
+        self.time = 0
+        self.__update_clock__()
+        self.score = {"ally": 00, "opponent": 00}
+        self.__update_scores__()
+
     def update(self, character: str, frame_height: float):
         curr_score = self.score.get(character)
         if curr_score == None:
