@@ -28,6 +28,7 @@ class ScoreBoard:
 
     def half_minute_passed(self):
         return self.half_minute_mark
+    
     def update(self, character: str, frame_height: float):
         curr_score = self.score.get(character)
         if curr_score == None:

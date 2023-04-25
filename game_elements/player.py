@@ -1,6 +1,7 @@
 from typing import Tuple
 from math import radians, cos, sin
 import pygame
+from pygame.math import Vector3
 from pygame.sprite import Group
 from game_elements.field import LEFT_FRONT_GOAL_X
 from utils.agent_actions import Action
@@ -35,6 +36,10 @@ class Player(AbstractElement):
         self.last_valid_pose = self.get_state()
         self.base_vel = PLAYER_LINEAR_SPEED
         self.angular_speed = self.base_vel*500
+
+    def set_pose(self, collision_handler: CollisionHandler, pose: Vector3 = (LEFT_FRONT_GOAL_X / 3, 0, 0)):
+        self._x, self._y, self._orientation = pose
+        collision_handler.update_element_sprite(self)
 
     def update(self, world_state: WorldState, collision_handler: CollisionHandler):
         restart_spin = False

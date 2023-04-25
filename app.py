@@ -37,7 +37,7 @@ class App:
                 else:
                     self.simulation.pause()
 
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN and not self.simulation.is_running():
             self.simulation.start()
 
     def on_loop(self):
