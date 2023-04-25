@@ -18,7 +18,7 @@ class ScoreBoard:
         self.time = 0  # tracks time in ms
         # keeps the appropriate representation for the scoreboard
         self.clock, self.clock_digits = self.__create_clock__()
-        self.thirty_sec_mark = True
+        self.half_minute_mark = False
 
     def get_score(self):
         return self.score
@@ -26,6 +26,8 @@ class ScoreBoard:
     def get_seconds(self)->int:
         return self.clock.get("sec")[0]*10+self.clock.get("sec")[1]
 
+    def half_minute_passed(self):
+        return self.half_minute_mark
     def update(self, character: str, frame_height: float):
         curr_score = self.score.get(character)
         if curr_score == None:
@@ -39,9 +41,9 @@ class ScoreBoard:
         last_sec = self.get_seconds()
         self.time += time
         self.__update_clock__()
-        self.thirty_sec_mark = False
+        self.half_minute_mark = False
         if last_sec % 30 != 0 and self.get_seconds() % 30 == 0:
-            self.thirty_sec_mark = True
+            self.half_minute_mark = True
         screen.blit(self.frame, ((screen.get_width() - self.frame.get_width()) / 2, 0))
         return screen
 

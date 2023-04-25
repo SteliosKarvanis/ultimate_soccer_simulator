@@ -21,14 +21,12 @@ PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 class Player(AbstractElement):
     def __init__(
         self,
-        group: Group,
         asset_path: str,
         initial_pos: Tuple = (LEFT_FRONT_GOAL_X / 2, 0),
         orientation: float = 0,
         behaviour: AbstractBehaviour = AbstractBehaviour(),
     ):
         super().__init__(initial_pos=initial_pos, orientation=orientation, vel=0, size=PLAYER_SIZE)
-        self.add(group)
         self._surface = pygame.image.load(asset_path)
         self.behaviour = behaviour
         self.spin_count = 0

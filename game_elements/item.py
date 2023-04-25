@@ -4,20 +4,19 @@ from game_elements.player import Player
 from enum import Enum
 from game_elements.effects import *
 
-ITEM_SIZE = 0.055
+ITEM_SIZE = (0.055, 0.055)
 
 class ItemState(Enum):
     WAITING = 0,
     IN_USE = 1
 
 class Item (Sprite):
-    def __init__(self, pos, birth_time, scale: float, *groups: Group) -> None:
-        super().__init__(*groups)
+    def __init__(self, pos, birth_time) -> None:
+        super().__init__()
         self.image = pygame.image.load("resources/item.png").convert_alpha()
-        self.size = (ITEM_SIZE*scale, ITEM_SIZE*scale)
-        self.image = pygame.transform.scale(self.image, self.size)
         self.mask = pygame.mask.from_surface(self.image)
-        self.pos = (pos[0]*scale, pos[1]*scale)
+        self.size = ITEM_SIZE
+        self.pos = (pos[0], pos[1])
         self.rect = self.image.get_rect(center=self.pos)
         self.lifetime = 0
         self.__set_lifetime__()
@@ -79,7 +78,7 @@ class Item (Sprite):
         return collision_point != None
 
 
-class Accelerate(Item):
+class Accelerator(Item):
     def __set_lifetime__(self):
         self.lifetime = 1e4
 
@@ -88,3 +87,5 @@ class Accelerate(Item):
     
     def __create_effect__(self, player: Player):
         self.effect = IncreaseSpeed(player)
+
+item_type_list = [Accelerator]
