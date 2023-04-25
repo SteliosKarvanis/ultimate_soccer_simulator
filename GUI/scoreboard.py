@@ -39,7 +39,7 @@ class ScoreBoard:
 
     def draw(self, screen: Surface, time: int):
         last_sec = self.get_seconds()
-        self.time = time
+        self.time += time
         self.__update_clock__()
         self.half_minute_mark = False
         if last_sec % 30 != 0 and self.get_seconds() % 30 == 0:

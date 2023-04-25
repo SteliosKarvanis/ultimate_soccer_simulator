@@ -12,9 +12,8 @@ from utils.collision_handler import CollisionHandler
 
 PLAYER_SPIN_COUNTDOWN = 5
 PLAYER_LINEAR_SPEED = 0.25
-PLAYER_ANGULAR_SPEED = 500*PLAYER_LINEAR_SPEED
 PLAYER_SPIN_SPEED = 1000
-PLAYER_SIDE = 0.075
+PLAYER_SIDE = 0.07
 PLAYER_SIZE = (PLAYER_SIDE, PLAYER_SIDE)
 
 
@@ -22,7 +21,7 @@ class Player(AbstractElement):
     def __init__(
         self,
         asset_path: str,
-        initial_pos: Tuple = (LEFT_FRONT_GOAL_X / 2, 0),
+        initial_pos: Tuple = (LEFT_FRONT_GOAL_X / 3, 0),
         orientation: float = 0,
         behaviour: AbstractBehaviour = AbstractBehaviour(),
     ):
@@ -35,6 +34,7 @@ class Player(AbstractElement):
         self.last_moving_action = Action()
         self.last_valid_pose = self.get_state()
         self.base_vel = PLAYER_LINEAR_SPEED
+        self.angular_speed = self.base_vel*500
 
     def update(self, world_state: WorldState, collision_handler: CollisionHandler):
         restart_spin = False
@@ -78,7 +78,7 @@ class Player(AbstractElement):
             new_vel = 0
             return (self._x, self._y, new_orientation, new_vel)
         else:
-            new_orientation = (self._orientation - action.rotate * PLAYER_ANGULAR_SPEED * SAMPLE_TIME) % 360
+            new_orientation = (self._orientation - action.rotate * self.angular_speed * SAMPLE_TIME) % 360
             return (
                 self._x + cos(radians(self._orientation)) * self._vel * SAMPLE_TIME,
                 self._y + sin(radians(self._orientation)) * self._vel * SAMPLE_TIME,

@@ -32,7 +32,8 @@ class Simulation:
         )
         self.opponent = Player(
             "resources/opponent.png",
-            initial_pos=(-LEFT_FRONT_GOAL_X / 2, 0),
+            initial_pos=(-LEFT_FRONT_GOAL_X / 3, 0),
+            orientation=180,
             behaviour=FSM()
         )
         self.players = pygame.sprite.Group(self.ally, self.opponent)
@@ -41,8 +42,14 @@ class Simulation:
         self.game_elements = pygame.sprite.Group(self.ally, self.opponent, self.ball)
         self.active_items = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
+        self.running = False
+    def start(self):
+        self.running = True
         self.clock.tick()
-
+    
+    def is_running(self) -> bool:
+        return self.running
+    
     def update(self):
         if not self.ball.collision_management(self.ally):
             l = self.ball.collision_management(self.opponent)
@@ -63,7 +70,7 @@ class Simulation:
     def draw(self, screen: Surface) -> Surface:
         screen = self.draw_field(screen)
         screen = self.__draw_elements__(screen)
-        screen = self.scoreboard.draw(screen, pygame.time.get_ticks())
+        screen = self.scoreboard.draw(screen, self.clock.tick())
         screen = self.__draw_items__(screen)
         return screen
 

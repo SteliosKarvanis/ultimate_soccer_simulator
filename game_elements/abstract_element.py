@@ -4,7 +4,6 @@ import pygame
 from game_elements.field import FIELD_LENGTH_X, TOP_FIELD_Y, LEFT_FRONT_GOAL_X, TOP_GOAL_Y
 from utils.utils import rotate_vector
 
-
 class AbstractElement(
     pygame.sprite.Sprite,
 ):
@@ -25,9 +24,6 @@ class AbstractElement(
         self.mask = pygame.mask.from_surface(self._surface)
         self.rect = self._sprite.get_rect()
         # Save a copy of initial state
-        self.__initial_pos = initial_pos
-        self.__initial_vel = vel
-        self.__initial_orientation = orientation
 
     def get_pos(self) -> Tuple[float, float]:
         return self._x, self._y
@@ -73,6 +69,6 @@ class AbstractElement(
         return self._surface
 
     def reset_state(self):
-        self._vel = self.__initial_vel
-        self._orientation = self.__initial_orientation
-        self._x, self._y = self.__initial_pos
+        self._vel = 0
+        self._orientation = 0
+        self._x, self._y = 0, 0

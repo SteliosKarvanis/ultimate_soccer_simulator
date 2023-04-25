@@ -27,8 +27,10 @@ class IncreaseSpeed(AbstractEffect):
 
     def transform(self, player: Player):
         player.base_vel = 2*self.original_state
+        player.angular_speed = player.base_vel*500
 
     def restore(self, player: Player):
         player.base_vel = self.original_state
+        player.angular_speed = player.base_vel*500
 
 
