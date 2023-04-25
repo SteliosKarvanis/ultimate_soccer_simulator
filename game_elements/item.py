@@ -87,9 +87,19 @@ class Accelerator(Item):
         self.lifetime = 10e3
 
     def __set_duration__(self):
-        self.effect_duration = 3e3
+        self.effect_duration = 5e3
     
     def __create_effect__(self, player: Player):
         self.effect = IncreaseSpeed(player)
 
-item_type_list = [Accelerator]
+class Mushroom(Item):
+    def __set_lifetime__(self):
+        self.lifetime = 10e3
+
+    def __set_duration__(self):
+        self.effect_duration = 3e3
+    
+    def __create_effect__(self, player: Player):
+        self.effect = IncreaseSize(player)
+
+item_type_list = [Mushroom, Accelerator]
