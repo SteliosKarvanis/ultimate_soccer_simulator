@@ -2,8 +2,6 @@ import pygame
 from pygame.event import Event
 from GUI.menu import Menu
 from simulation import Simulation
-from GUI.menu import Menu
-
 
 class App:
     def __init__(self):

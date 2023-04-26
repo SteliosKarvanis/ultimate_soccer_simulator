@@ -6,7 +6,7 @@ from enum import Enum
 from game_elements.effects import *
 from pygame.colordict import THECOLORS as colors
 
-ITEM_SIZE = (0.055, 0.055)
+ITEM_SIZE = (0.06, 0.06)
 
 class Message:
     def __init__(self, sprite: pygame.Surface, pos: Vector2) -> None:

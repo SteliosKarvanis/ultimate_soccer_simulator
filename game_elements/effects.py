@@ -1,5 +1,3 @@
-from dataclasses import dataclass, field
-from typing import Any
 from game_elements.player import Player
 
 class AbstractEffect:

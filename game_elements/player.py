@@ -2,7 +2,6 @@ from typing import Tuple
 from math import radians, cos, sin
 import pygame
 from pygame.math import Vector3
-from pygame.sprite import Group
 from game_elements.field import LEFT_FRONT_GOAL_X
 from utils.agent_actions import Action
 from utils.configs import SAMPLE_TIME

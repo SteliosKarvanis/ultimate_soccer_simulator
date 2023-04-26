@@ -1,10 +1,6 @@
 from utils.configs import Configuration
 from pygame.colordict import THECOLORS as colors
 
-# from typing import Tuple
-from dataclasses import fields
-
-
 class Menu:
     def __init__(self) -> None:
         self.configs = Configuration()
