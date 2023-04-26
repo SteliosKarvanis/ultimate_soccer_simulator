@@ -41,6 +41,7 @@ class AbstractElement(
         return self._x, self._y, self._orientation, self._vel
 
     def __is_valid_update__(self, updates: Tuple[float, float, float, float]) -> bool:
+        """checks if a possible future pose is within field bounds"""
         next_x, next_y, rotation, vel = updates
         # Clamp angle between [0, 90[
         while rotation >= 90:
@@ -67,8 +68,3 @@ class AbstractElement(
 
     def get_surface(self) -> pygame.Surface:
         return self._surface
-
-    def reset_state(self):
-        self._vel = 0
-        self._orientation = 0
-        self._x, self._y = 0, 0

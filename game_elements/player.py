@@ -28,19 +28,23 @@ class Player(AbstractElement):
         super().__init__(initial_pos=initial_pos, orientation=orientation, vel=0, size=PLAYER_SIZE)
         self._surface = pygame.image.load(asset_path)
         self.behaviour = behaviour
-        self.spin_count = 0
+        # *_count fields serve the purpose of holding the player in a state that ignores new information from multiple simulation.update() calls
+        self.spin_count = 0 
         self.rebound_action = Action()
-        self.rebound_count = 0
-        self.last_moving_action = Action()
+        self.rebound_count = 0 
+        self.last_moving_action = Action() #keeps track of the action to be used during rebound
         self.last_valid_pose = self.get_state()
-        self.base_vel = PLAYER_LINEAR_SPEED
+        self.base_vel = PLAYER_LINEAR_SPEED # stores the base speed to avoid loss of this value when the players stops translating
         self.angular_speed = self.base_vel*500
 
     def set_pose(self, collision_handler: CollisionHandler, pose: Vector3 = (LEFT_FRONT_GOAL_X / 3, 0, 0)):
+        """created specifically to be called by the simulation when restarting the gameplay (to avoid creating new Player objects)"""
         self._x, self._y, self._orientation = pose
         collision_handler.update_element_sprite(self)
 
     def update(self, world_state: WorldState, collision_handler: CollisionHandler):
+        """consults the world_state (through the behaviour) and the collision_handler to generate the next action
+        and then validate the next pose"""
         restart_spin = False
         if self.__should_spin_in_delay__():
             action = Action(spin=1)
@@ -73,10 +77,12 @@ class Player(AbstractElement):
         return super().__is_valid_update__(updates) and not collision_handler.check_collision(self)
     
     def __update_state__(self, updates, collision_handler: CollisionHandler):
+        """keeps both state variables and graphical attributes up to date with the action taken when updating"""
         self._x, self._y, self._orientation, self._vel = updates
         collision_handler.update_element_sprite(self)
 
     def __next_pose__(self, action: Action) -> Tuple[float]:
+        """preeptively calculates the next pose so that it may be validated before overwriting the current one"""
         if action.spin:
             new_orientation = (self._orientation - PLAYER_SPIN_SPEED * SAMPLE_TIME) % 360
             new_vel = 0
@@ -91,6 +97,7 @@ class Player(AbstractElement):
             )
 
     def __should_spin_in_delay__(self) -> bool:
+        """keeps the player in the spin loop while it should last (player.spin_count < PLAYER_SPIN_COUNTDOWN)"""
         if self.spin_count and self.spin_count < PLAYER_SPIN_COUNTDOWN:
             return True
         return False

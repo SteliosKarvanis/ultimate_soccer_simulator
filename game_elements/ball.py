@@ -27,6 +27,11 @@ class Ball(AbstractElement):
         self._radius = BALL_RADIUS
         self._surface = pygame.image.load("resources/ball.png")
 
+    def reset_state(self):
+        self._vel = 0
+        self._orientation = 0
+        self._x, self._y = 0, 0
+        
     def update(self) -> str:
         collision_side = self.get_bumper_state()
         if collision_side == "up" or collision_side == "down":

@@ -86,7 +86,7 @@ class Simulation:
             player = item.update(pygame.time.get_ticks(), self.players)
             if player != None:
                 self.item_messages.append((item.create_message(player)))
-                self.item_messages[-1].birth_time = pygame.time.get_ticks()
+                self.item_messages[-1].create(pygame.time.get_ticks())
                 item.effect.transform(player)
 
         self.ally.update(self.get_state(), self.collision_handler)
