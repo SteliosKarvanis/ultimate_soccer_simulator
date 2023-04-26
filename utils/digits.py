@@ -40,7 +40,6 @@ def get_segments(n: int) -> Sequence[bool]:
     assert n % 10 == n
     return binaries[n]
 
-
 def draw_digit(n: int) -> Surface:
     digit = Surface((DIGIT_WIDTH, CLOCK_FRAME_HEIGHT))
     digit.fill(colors.get("black"))
@@ -56,5 +55,5 @@ def draw_digit(n: int) -> Surface:
     frame.blit(digit, ((1 - ratio) / 2 * DIGIT_WIDTH, (1 - ratio) / 2 * CLOCK_FRAME_HEIGHT))
     return frame
 
-
+"""list of 7-segment digit as surfaces"""
 digits = [draw_digit(n) for n in range(10)]

@@ -23,7 +23,7 @@ class Simulation:
         self.configs = SimulConfig.generate_from_config(config)
         self.surface = surface
         self.scoreboard = ScoreBoard(self.configs.scoreboard_height)
-        self.FPS = self.configs.FPS
+        self.FPS = self.configs.FPS # could be used to fix the FPS (currently it's not)
         self.collision_handler = CollisionHandler(self.generate_scaling_function())
         self.ally = Player(
             "resources/player.png",
@@ -63,20 +63,24 @@ class Simulation:
         self.paused = False
 
     def is_running(self) -> bool:
+        """returns the flag which differentiates between gameplay and titlescreen"""
         return self.running
     
     def is_paused(self) -> bool:
+        """returns True if the the simulation shoundn't be updated by the app"""
         return self.paused
     
+
     def update(self):
+        """calls all state update methods of the game_elements (players, ball and items) as well as the scoreboard, if there was a goal"""
         if not self.ball.collision_management(self.ally):
             l = self.ball.collision_management(self.opponent)
         goal_state = self.ball.update()
         if goal_state != "None":
             self.scoreboard.update(character=goal_state, frame_height=self.configs.scoreboard_height)
+
         if self.scoreboard.half_minute_passed():
             self.generate_item()
-
         for item in self.active_items:
             assert isinstance(item, Item)
             player = item.update(pygame.time.get_ticks(), self.players)
@@ -89,6 +93,7 @@ class Simulation:
         self.opponent.update(self.get_state(), self.collision_handler)
 
     def draw(self, screen: Surface) -> Surface:
+        """draws the graphical elements of the simulation"""
         screen = self.draw_field(screen)
         screen = self.__draw_elements__(screen)
         screen = self.__draw_item_msgs__(screen)
@@ -105,6 +110,8 @@ class Simulation:
         )
 
     def generate_item(self):
+        """chooses randomly a position from a predefined region of the field and a type from the ones made available by the game_elements.item module,
+        then adds the item to the active items group, so it may be tracked by the simulation updates"""
         pos = (random.uniform(-FIELD_LENGTH_X/4,FIELD_LENGTH_X/4), random.uniform(-FIELD_LENGTH_Y/4, FIELD_LENGTH_Y/4))
         new_item_type = random.sample(item_type_list, 1)
         new_item_type = new_item_type[0]
@@ -113,6 +120,7 @@ class Simulation:
         self.active_items.add(new_item)
         
     def initialize_item(self, item: Item):
+        """updates the graphical attributes of the item in accordance with the screen scale"""
         item.size = self.field_to_pix_scale(item.size)
         item.pos = self.field_to_pix_scale(item.pos)
         item.image = pygame.transform.scale(item.image, item.size)
@@ -120,6 +128,7 @@ class Simulation:
         item.rect = item.image.get_rect(center=item.pos)
         
     def __draw_item_msgs__(self, screen: Surface) -> Surface:
+        """draws the correspondent item message, for each active item"""
         for msg in self.item_messages:
             screen.blit(msg.msg, self.field_to_pix_coord(msg.pos))
             if pygame.time.get_ticks() - msg.birth_time >= msg.lifetime:
@@ -127,6 +136,7 @@ class Simulation:
         return screen
     
     def __draw_elements__(self, screen: Surface) -> Surface:
+        """draw players and ball"""
         for sprite in self.game_elements.sprites():
             screen = self.__draw_element__(screen, sprite)
         return screen
@@ -146,6 +156,7 @@ class Simulation:
         return screen
 
     def field_to_pix_coord(self, point_field: Tuple[float, float], scale = True) -> Tuple[int, int]:
+        """converts from the field reference system (which is the same used by the players) to the one used by the screen to draw assets"""
         if scale:
             point_field = self.field_to_pix_scale(point_field)
         point = reflect_vector_vertically(point_field)
@@ -164,6 +175,7 @@ class Simulation:
         return screen
 
     def generate_scaling_function(self):
+        """function made to allow the collision_handler field to have its own indepent instance of a scaling function (from the field to the screen scale)"""
         return lambda x: self.field_to_pix_scale_generic(x, self.configs.screen_res[1], self.scoreboard.frame.get_height())
     
     def field_to_pix_scale_generic(self, point, height, offset):
