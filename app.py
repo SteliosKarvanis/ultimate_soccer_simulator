@@ -1,9 +1,8 @@
 import pygame
 from pygame.event import Event
 from GUI.menu import Menu
-from GUI.button import Button
 from simulation import Simulation
-from GUI.start_menu import Start_Menu
+from GUI.menu import Menu
 
 
 class App:
@@ -15,13 +14,11 @@ class App:
         self.lawn = pygame.image.load("resources/lawn.jpeg")
         self.__update_assets__()
         self.simulation = Simulation(self.menu.configs, self.lawn)
-        self.button = Button()
 
     def on_init(self):
         pygame.init()
         self.text_font1 = pygame.font.SysFont('Times New Roman', 57, bold=True)
         self.text_font2 = pygame.font.SysFont('Arial', 40, bold=True)
-        self.start_menu = Start_Menu()
         self._screen = pygame.display.set_mode(self.menu.get_config("screen_res"))
         self._running = True
 
@@ -54,7 +51,6 @@ class App:
     def on_render(self):
         self.__update_assets__()
         if self._running:
-            self._screen = self.button.draw(self._screen)
             if self.simulation.is_running():
                 self._screen.blit(self.background_image, (0, 0))
                 self._screen.blit(
@@ -66,17 +62,17 @@ class App:
                     pygame.transform.scale(self.lawn, self._screen.get_size()), (0, 0)
                 )
                 title_start = self.text_font1.render(
-                    self.start_menu.title[0], True, self.start_menu.text_color
+                    self.menu.title[0], True, self.menu.text_color
                 )
                 game_title = self.text_font1.render(
-                    self.start_menu.title[1], True, self.start_menu.title_color
+                    self.menu.title[1], True, self.menu.title_color
                 )
                 self._screen.blit(title_start,(self._screen.get_width() / 20, self._screen.get_height()/4))
                 self._screen.blit(game_title,(self._screen.get_width() / 20 + title_start.get_width() + self.text_font2.get_height()/2, self._screen.get_height()/4))
                 pos_y = self._screen.get_height()/2
                 pos_x = self._screen.get_width()/2
-                for text in self.start_menu.texts:
-                    text = self.text_font2.render(text, True, self.start_menu.text_color)
+                for text in self.menu.texts:
+                    text = self.text_font2.render(text, True, self.menu.text_color)
                     pos_y += self.text_font2.get_height()*1.5
                     self._screen.blit(text,(pos_x - text.get_width()/2, pos_y))
                 
