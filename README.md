@@ -1,3 +1,6 @@
+# Soccer Simulator
+An python game, that simulates a 2D soccer game between unidirectional players
+
 # To download the dependencies
 `pip install -r requirements.txt`
 
